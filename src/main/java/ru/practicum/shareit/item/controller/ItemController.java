@@ -24,6 +24,7 @@ public class ItemController {
     final ItemServiceImpl itemServiceImpl;
 
     final String pathIdItem = "/{itemId}";
+    final String headerOwnerValue = "X-Sharer-User-Id";
 
     @Autowired
     public ItemController(@Qualifier("ItemServiceImpl") ItemServiceImpl itemServiceImpl) {
@@ -31,21 +32,21 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addNewItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long ownerId, @RequestBody Item item) {
+    public ItemDto addNewItem(@RequestHeader(value = headerOwnerValue, required = false) Long ownerId, @RequestBody Item item) {
         log.info("Поступил запрос на создание нового товара");
         return itemServiceImpl.addNewItem(item, ownerId);
     }
 
 
     @PatchMapping(pathIdItem)
-    public ItemDto updateItem(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long ownerId, @PathVariable long itemId, @RequestBody Item item) {
+    public ItemDto updateItem(@RequestHeader(value = headerOwnerValue, required = false) Long ownerId, @PathVariable long itemId, @RequestBody Item item) {
         log.info(String.format("%s %d", "Поступил запрос на изменение товара с id =", itemId));
         return itemServiceImpl.updateItem(itemId, item, ownerId);
     }
 
 
     @GetMapping
-    public List<ItemDto> getAllItems(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long ownerId) {
+    public List<ItemDto> getAllItems(@RequestHeader(value = headerOwnerValue, required = false) Long ownerId) {
         log.info("Поступил запрос на вывод всех товаров");
         return itemServiceImpl.getAllItems(ownerId);
     }
