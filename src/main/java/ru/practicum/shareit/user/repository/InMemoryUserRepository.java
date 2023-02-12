@@ -101,7 +101,7 @@ public class InMemoryUserRepository implements UserRepository {
             user.setEmail(users.get(user.getId()).getEmail());
         } else {
             for (User oldUser : users.values()) {
-                if (oldUser.getEmail().equals(user.getEmail())) {
+                if (oldUser.getEmail().equals(user.getEmail()) && oldUser.getId() != user.getId()) {
                     throw new IsAlreadyExistsException("Такой email используется другим пользователем");
                 }
             }
