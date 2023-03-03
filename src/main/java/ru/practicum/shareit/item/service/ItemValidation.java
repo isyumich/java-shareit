@@ -3,8 +3,8 @@ package ru.practicum.shareit.item.service;
 import ru.practicum.shareit.item.model.Item;
 
 public class ItemValidation {
-    public boolean itemValidation(Item item, Long ownerId) {
-        return nameValidation(item) && descriptionValidation(item) && availableValidation(item) && ownerIdValidation(ownerId);
+    public boolean itemValidation(Item item, Long userId) {
+        return nameValidation(item) && descriptionValidation(item) && availableValidation(item) && ownerIdValidation(userId);
     }
 
     private boolean nameValidation(Item item) {
@@ -27,7 +27,7 @@ public class ItemValidation {
         return item.getAvailable() != null;
     }
 
-    private boolean ownerIdValidation(Long ownerId) {
-        return ownerId != null;
+    private boolean ownerIdValidation(Long userId) {
+        return userId != null;
     }
 }

@@ -5,7 +5,7 @@ import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -13,19 +13,20 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "items")
-public class Item {
+@Table(name = "comments")
+public class Comment {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    @Column(name = "name", nullable = false)
-    String name;
-    @Column(name = "description", nullable = false)
-    String description;
-    @Column(name = "available", nullable = false)
-    Boolean available;
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    User owner;
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    Item item;
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    User author;
+    @Column(name = "create_date")
+    LocalDateTime createDate;
+    @Column(name = "text")
+    String text;
 }

@@ -1,18 +1,11 @@
 package ru.practicum.shareit.user.repository;
 
-import ru.practicum.shareit.user.dto.UserDto;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-public interface UserRepository {
-    UserDto addUser(User user);
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    UserDto updateUser(User user, long userId);
-
-    List<UserDto> getAllUsers();
-
-    UserDto getUserById(long userId);
-
-    void deleteUser(long userId);
+    List<User> findByEmailEqualsIgnoreCaseAndIdNot(String email, Long userId);
 }
