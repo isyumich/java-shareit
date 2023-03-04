@@ -59,24 +59,28 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approveOrRejectBooking(Long userId, long bookingId, boolean approved) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено"));
-            throw new NotFoundException(String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено"));
+            String message = String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getItem().getOwner().getId())) {
-            log.info("Подтверждать или отменять бронь может только владелец вещи");
-            throw new NotFoundException("Подтверждать или отменять бронь может только владелец вещи");
+            String message = "Подтверждать или отменять бронь может только владелец вещи";
+            log.info(message);
+            throw new NotFoundException(message);
         }
         if (approved) {
             if (booking.getStatus().equals(BookingStatus.APPROVED)) {
-                log.info("Попытка подтверждения уже подтвержденного бронирования");
-                throw new IsAlreadyDoneException("Попытка подтверждения уже подтвержденного бронирования");
+                String message = "Попытка подтверждения уже подтвержденного бронирования";
+                log.info(message);
+                throw new IsAlreadyDoneException(message);
             }
             booking.setStatus(BookingStatus.APPROVED);
         } else {
             if (booking.getStatus().equals(BookingStatus.REJECTED)) {
-                log.info("Попытка отмены уже отмененного бронирования");
-                throw new IsAlreadyDoneException("Попытка отмены уже отмененного бронирования");
+                String message = "Попытка отмены уже отмененного бронирования";
+                log.info(message);
+                throw new IsAlreadyDoneException(message);
             }
             booking.setStatus(BookingStatus.REJECTED);
         }
@@ -86,13 +90,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getBookingById(Long userId, long bookingId) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Бронь с id =", bookingId, "не найдена"));
-            throw new NotFoundException(String.format("%s %d %s", "Бронь с id = ", bookingId, "не найдена"));
+            String message = String.format("%s %d %s", "Бронь с id =", bookingId, "не найдена");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
-            log.info("Просматривать бронь может либо автор брони либо владелец вещи");
-            throw new NotFoundException("Просматривать бронь может либо автор брони либо владелец вещи");
+            String message = "Просматривать бронь может либо автор брони либо владелец вещи";
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return BookingDtoMapper.mapRow(booking);
     }
@@ -115,7 +121,9 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 return bookingsToBookingsDto(bookingRepository.findBookingsByBookerIsAndStatusOrderByStartDesc(user, BookingStatus.REJECTED));
             default:
-                throw new UnsupportedOperationException("Указан неверный статус");
+                String message = "Указан неверный статус";
+                log.info(message);
+                throw new UnsupportedOperationException(message);
         }
     }
 
@@ -139,7 +147,9 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 return bookingsToBookingsDto(bookingRepository.findBookingsByItemInAndStatusOrderByStartDesc(items, BookingStatus.REJECTED));
             default:
-                throw new UnsupportedOperationException("Указан неверный статус");
+                String message = "Указан неверный статус";
+                log.info(message);
+                throw new UnsupportedOperationException(message);
         }
     }
 
@@ -155,16 +165,18 @@ public class BookingServiceImpl implements BookingService {
 
     private Item getItemById(long itemId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Вещь с id =", itemId, "не найдена"));
-            throw new NotFoundException(String.format("%s %d %s", "Вещь с id = ", itemId, "не найдена"));
+            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return itemRepository.findById(itemId).get();
     }
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            log.debug(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return userRepository.findById(userId).get();
     }

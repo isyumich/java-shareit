@@ -32,20 +32,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(User user) {
         if (!userValidation.userValidation(user)) {
-            log.info("Поля заполнены неверно");
-            throw new ValidationException("Поля заполнены неверно");
+            String message = "Поля заполнены неверно";
+            log.info(message);
+            throw new ValidationException(message);
         }
         return UserDtoMapper.mapRow(userRepository.save(user));
     }
 
     @Override
     public UserDto updateUser(User user, long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-        }
-        user.setId(userId);
-        User checkedUser = checkFieldsForUpdate(user);
+        User checkedUser = checkFieldsForUpdate(user, userId);
+        checkedUser.setId(userId);
         return UserDtoMapper.mapRow(userRepository.save(checkedUser));
     }
 
@@ -57,8 +54,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            log.debug(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return UserDtoMapper.mapRow(userRepository.findById(userId).get());
     }
@@ -66,15 +64,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         userRepository.deleteById(userId);
         log.info(String.format("%s %d %s", "Пользователь с id =", userId, "удалён"));
     }
 
-    private User checkFieldsForUpdate(User user) {
-        User oldUser = userRepository.findById(user.getId()).get();
+    private User checkFieldsForUpdate(User user, long userId) {
+        if (userRepository.findById(userId).isEmpty()) {
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
+        }
+        User oldUser = userRepository.findById(userId).get();
         if (user.getName() == null) {
             user.setName(oldUser.getName());
         }

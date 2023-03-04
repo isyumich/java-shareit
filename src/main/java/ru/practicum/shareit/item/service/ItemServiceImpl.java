@@ -54,8 +54,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addNewItem(Item item, Long userId) {
         if (!itemValidation.itemValidation(item, userId)) {
-            log.info("Поля заполнены неверно или не указан id пользователя");
-            throw new ValidationException("Поля заполнены неверно или не указан id пользователя");
+            String message = "Поля заполнены неверно или не указан id пользователя";
+            log.info(message);
+            throw new ValidationException(message);
         }
         User owner = getUserById(userId);
         item.setOwner(owner);
@@ -65,27 +66,32 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addNewComment(Comment comment, Long userId, long itemId) {
         if (!commentValidation.commentValidation(comment)) {
-            log.info("Не указан текст отзыва");
-            throw new ValidationException("Не указан текст отзыва");
+            String message = "Не указан текст отзыва";
+            log.info(message);
+            throw new ValidationException(message);
         }
         LocalDateTime currentDate = LocalDateTime.now();
         if (itemRepository.findById(itemId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Вещь с id =", itemId, "не найдена"));
-            throw new NotFoundException(String.format("%s %d %s", "Вещь с id = ", itemId, "не найдена"));
+            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         Item item = itemRepository.findById(itemId).get();
         if (userRepository.findById(userId).isEmpty()) {
-            log.debug(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         User user = userRepository.findById(userId).get();
         if (bookingRepository.findBookingsByItemIsAndBookerIsAndStatus(item, user, BookingStatus.APPROVED).isEmpty()) {
-            log.debug(String.format("%s %d %s %d", "Пользователь с id =", userId, "не бронировал вещь с id=", itemId));
-            throw new ValidationException(String.format("%s %d %s %d", "Пользователь с id =", userId, "не бронировал вещь с id=", itemId));
+            String message = String.format("%s %d %s %d", "Пользователь с id =", userId, "не бронировал вещь с id=", itemId);
+            log.info(message);
+            throw new ValidationException(message);
         }
         if (bookingRepository.findBookingsByItemIsAndBookerIsAndStatusAndEndBefore(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
-            log.debug(String.format("%s %d %s %d %s", "Бронь пользователя с id =", userId, "для брони вещи с id=", itemId, "ещё не закончилась"));
-            throw new ValidationException(String.format("%s %d %s %d %s", "Бронь пользователя с id =", userId, "для брони вещи с id=", itemId, "ещё не закончилась"));
+            String message = String.format("%s %d %s %d %s", "Бронь пользователя с id =", userId, "для брони вещи с id=", itemId, "ещё не закончилась");
+            log.info(message);
+            throw new ValidationException(message);
         }
         comment.setItem(item);
         comment.setCreateDate(currentDate);
@@ -111,8 +117,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(long itemId, Long userId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            log.info(String.format("%s %d %s", "Вещь с id =", itemId, "не найдена"));
-            throw new NotFoundException(String.format("%s %d %s", "Вещь с id = ", itemId, "не найдена"));
+            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return itemToItemDto(itemRepository.findById(itemId).get(), userId);
     }
@@ -174,17 +181,20 @@ public class ItemServiceImpl implements ItemService {
 
     private Item checkFieldsForUpdate(Item item, long itemId, Long userId) {
         if (userId == null) {
-            log.info("Не указан id владельца");
-            throw new InternalServerException("Не указан id владельца");
+            String message = "Не указан id владельца";
+            log.info(message);
+            throw new InternalServerException(message);
         }
         if (itemRepository.findById(itemId).isEmpty()) {
-            log.debug(String.format("%s %d %s", "Товар с id =", itemId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Товар с id = ", itemId, "не найден"));
+            String message = String.format("%s %d %s", "Товар с id =", itemId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         Item itemFromDb = itemRepository.findById(itemId).get();
         if (!userId.equals(itemFromDb.getOwner().getId())) {
-            log.info("Попытка редактирования товара другого пользователя");
-            throw new ForbiddenException("Вам нельзя редактировать товар другого пользователя");
+            String message = "Попытка редактирования товара другого пользователя";
+            log.info(message);
+            throw new ForbiddenException(message);
         }
         if (item.getName() == null) {
             item.setName(itemFromDb.getName());
@@ -200,8 +210,9 @@ public class ItemServiceImpl implements ItemService {
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            log.debug(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
-            throw new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден"));
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            log.info(message);
+            throw new NotFoundException(message);
         }
         return userRepository.findById(userId).get();
     }
