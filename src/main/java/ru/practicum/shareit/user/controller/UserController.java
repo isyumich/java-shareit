@@ -12,9 +12,6 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @Slf4j
 @RequestMapping(path = "/users")
@@ -31,34 +28,36 @@ public class UserController {
 
     @PostMapping
     public UserDto addNewUser(@RequestBody User user) {
-        log.info("Поступил запрос на создание нового пользователя");
+        log.info("Запрос на создание нового пользователя");
         return userServiceImpl.addUser(user);
     }
 
 
     @PatchMapping(pathUserId)
     public UserDto updateUser(@PathVariable long userId, @RequestBody User user) {
-        log.info(String.format("%s %d", "Поступил запрос на изменение пользователя с id =", userId));
+        log.info(String.format("%s %d", "Запрос на изменение пользователя с id =", userId));
         return userServiceImpl.updateUser(user, userId);
     }
 
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        log.info("Поступил запрос на вывод всех пользователей");
+        log.info("Запрос на вывод всех пользователей");
         return userServiceImpl.getAllUsers();
     }
 
     @GetMapping(pathUserId)
     public UserDto getUserById(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Поступил запрос на вывод пользователя с id =", userId));
+        log.info(String.format("%s %d", "Запрос на вывод пользователя с id =", userId));
         return userServiceImpl.getUserById(userId);
     }
 
 
     @DeleteMapping(pathUserId)
     public void deleteUser(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Поступил запрос на удаление пользователя с id =", userId));
+        log.info(String.format("%s %d", "Запрос на удаление пользователя с id =", userId));
         userServiceImpl.deleteUser(userId);
     }
+
+
 }
