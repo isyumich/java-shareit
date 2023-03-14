@@ -17,7 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.IsAlreadyExistsException;
+import ru.practicum.shareit.exception.IsAlreadyDoneException;
 import ru.practicum.shareit.exception.ValidationException;
 
 import java.time.LocalDateTime;
@@ -121,7 +121,7 @@ public class BookingControllerTest {
     void approveBookingTest_whenBookingIsAlreadyApproved_thenThrow() {
         long bookingId = 3L;
         when(bookingService.approveOrRejectBooking(anyLong(), anyLong(), anyBoolean()))
-                .thenThrow(new IsAlreadyExistsException("This booking is already approved"));
+                .thenThrow(new IsAlreadyDoneException("This booking is already approved"));
 
         String result = mockMvc.perform(patch(pathBookings + pathBookingId, bookingId)
                         .param("approved", "true")

@@ -99,4 +99,24 @@ public class ItemRequestServiceTest {
         assertThrows(NotFoundException.class, () -> itemRequestServiceimpl.getRequestById(2L, 1L));
     }
 
+    @Test
+    void getItemRequestsTest() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
+
+        List<ItemRequestDto> result = itemRequestServiceimpl.getAllItemRequests(1, 1, owner.getId());
+
+        verify(itemRequestRepository).findAllItemRequests(any(), any());
+        assertEquals(new ArrayList<>(), result);
+    }
+
+    @Test
+    void getOwnItemRequestsTest() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
+
+        List<ItemRequestDto> result = itemRequestServiceimpl.getOwnItemRequests(owner.getId());
+
+        verify(itemRequestRepository).findItemRequestsByAuthor(any());
+        assertEquals(new ArrayList<>(), result);
+    }
+
 }

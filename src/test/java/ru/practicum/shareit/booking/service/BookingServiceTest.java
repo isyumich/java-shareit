@@ -16,6 +16,8 @@ import ru.practicum.shareit.booking.dto.RequestBodyBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exception.IllegalArgumentException;
+import ru.practicum.shareit.exception.IsAlreadyDoneException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -81,6 +83,16 @@ public class BookingServiceTest {
     }
 
     @Test
+    void approvedBookingTest_whenIsAlreadyApproved_thenThrowException() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
+        booking.setItem(item);
+
+        assertThrows(IsAlreadyDoneException.class,
+                () -> bookingServiceImpl.approveOrRejectBooking(2L, 1L, true));
+    }
+
+    @Test
     void getBookingByIdTest_whenBookingPresent_thenBooking() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
@@ -98,5 +110,21 @@ public class BookingServiceTest {
 
         verify(bookingRepository, never()).findById(anyLong());
         assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBookingById(2L, 1L));
+    }
+
+    @Test
+    void getBookingCurrentUserTest_whenStateIllegal_thenThrowException() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingServiceImpl.getBookingCurrentUser(2L, "State", 1, 1));
+    }
+
+    @Test
+    void getBookingItemsCurrentUserTest_whenStateIllegal_thenThrowException() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> bookingServiceImpl.getBookingCurrentUser(2L, "State", 1, 1));
     }
 }
