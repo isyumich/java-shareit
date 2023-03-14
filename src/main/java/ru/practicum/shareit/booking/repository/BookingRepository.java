@@ -45,23 +45,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "select * from bookings b " +
             "left join items i on b.item_id = i.id " +
             "left join users u on b.booker_id = u.id " +
-            "where b.item_id = :item_id " +
+            "where b.item_id = :itemId " +
             "and b.start_date < :start " +
             "and b.booking_status = :status " +
             "order by b.start_date desc " +
             "limit 1", nativeQuery = true)
-    Booking findLastBooking(long item_id, LocalDateTime start, String status);
+    Booking findLastBooking(long itemId, LocalDateTime start, String status);
 
     @Query(value = "select * from bookings b " +
             "left join items i on b.item_id = i.id " +
             "left join users u on b.booker_id = u.id " +
-            "where b.item_id = :item_id " +
+            "where b.item_id = :itemId " +
             "and b.start_date > :start " +
             "and b.booking_status = :status " +
             "order by b.start_date asc " +
             "limit 1", nativeQuery = true)
-    Booking findNextBooking(long item_id, LocalDateTime start, String status);
+    Booking findNextBooking(long itemId, LocalDateTime start, String status);
 
     @Query(value = "select b from Booking b where b.item = :item and b.booker = :user and b.status = :status and b.end < :end")
-    List<Booking> FindPastBookingsForUserAndItem(Item item, User user, BookingStatus status, LocalDateTime end);
+    List<Booking> findPastBookingsForUserAndItem(Item item, User user, BookingStatus status, LocalDateTime end);
 }

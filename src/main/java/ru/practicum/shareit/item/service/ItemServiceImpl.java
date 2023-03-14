@@ -93,7 +93,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(message);
         }
         User user = userRepository.findById(userId).get();
-        if (bookingRepository.FindPastBookingsForUserAndItem(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
+        if (bookingRepository.findPastBookingsForUserAndItem(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
             String message = String.format("%s %d %s %d", "The user with id =", userId, "don't have a completed booking with item with id=", itemId);
             log.info(message);
             throw new ValidationException(message);

@@ -25,8 +25,8 @@ public class ItemRequestDtoTest {
     void itemRequestDtoTest() throws IOException {
         long itemRequestId = 1L;
         LocalDateTime currentDate = LocalDateTime.now();
-        ItemRequestDto itemRequestDto = ItemRequestDto.builder().
-                id(itemRequestId).description("itemRequestDesc1")
+        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+                .id(itemRequestId).description("itemRequestDesc1")
                 .created(currentDate).items(new ArrayList<>()).build();
         JsonContent<ItemRequestDto> result = jacksonTester.write(itemRequestDto);
 

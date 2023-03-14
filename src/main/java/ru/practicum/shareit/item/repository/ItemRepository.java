@@ -21,6 +21,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "and i.available is true")
     List<Item> findAvailableItemsByNameOrDescription(String textName, String textDesc, Pageable pageable);
 
-    @Query(value = "select * from items where item_request_id = :request_id", nativeQuery = true)
-    List<Item> findItemsByRequests(long request_id);
+    @Query(value = "select * from items where item_request_id = :requestId", nativeQuery = true)
+    List<Item> findItemsByRequests(long requestId);
 }
