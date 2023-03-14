@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.LastAndNextBookingDtoMapper;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -13,14 +14,13 @@ import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.InternalServerException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentDtoMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoMapper;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item_request.model.ItemRequest;
+import ru.practicum.shareit.item_request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -37,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
     final UserRepository userRepository;
     final BookingRepository bookingRepository;
     final CommentRepository commentRepository;
+    final ItemRequestRepository itemRequestRepository;
     final ItemValidation itemValidation = new ItemValidation();
     final CommentValidation commentValidation = new CommentValidation();
 
@@ -44,52 +45,56 @@ public class ItemServiceImpl implements ItemService {
     public ItemServiceImpl(ItemRepository itemRepository,
                            UserRepository userRepository,
                            BookingRepository bookingRepository,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
-    public ItemDto addNewItem(Item item, Long userId) {
-        if (!itemValidation.itemValidation(item, userId)) {
-            String message = "Поля заполнены неверно или не указан id пользователя";
+    public ItemDto addNewItem(RequestBodyItemDto requestBodyItemDto, Long userId) {
+        if (!itemValidation.itemValidation(requestBodyItemDto, userId)) {
+            String message = "The fields are not valid or userId is missing";
             log.info(message);
             throw new ValidationException(message);
         }
+        Item item = RequestBodyItemDtoMapper.mapRow(requestBodyItemDto);
         User owner = getUserById(userId);
+        Long itemRequestId = requestBodyItemDto.getRequestId();
+        if (itemRequestId != null) {
+            ItemRequest itemRequest = getRequestById(requestBodyItemDto.getRequestId());
+            item.setItemRequest(itemRequest);
+        }
         item.setOwner(owner);
-        return itemToItemDto(itemRepository.save(item), userId);
+        Item savedItem = itemRepository.save(item);
+        return itemToItemDto(savedItem, userId);
     }
 
     @Override
     public CommentDto addNewComment(Comment comment, Long userId, long itemId) {
         if (!commentValidation.commentValidation(comment)) {
-            String message = "Не указан текст отзыва";
+            String message = "The comment's text is missing";
             log.info(message);
             throw new ValidationException(message);
         }
         LocalDateTime currentDate = LocalDateTime.now();
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "The item with id =", itemId, "not found");
             log.info(message);
             throw new NotFoundException(message);
         }
         Item item = itemRepository.findById(itemId).get();
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            String message = String.format("%s %d %s", "The user with id =", userId, "not found");
             log.info(message);
             throw new NotFoundException(message);
         }
         User user = userRepository.findById(userId).get();
-        if (bookingRepository.findBookingsByItemIsAndBookerIsAndStatus(item, user, BookingStatus.APPROVED).isEmpty()) {
-            String message = String.format("%s %d %s %d", "Пользователь с id =", userId, "не бронировал вещь с id=", itemId);
-            log.info(message);
-            throw new ValidationException(message);
-        }
-        if (bookingRepository.findBookingsByItemIsAndBookerIsAndStatusAndEndBefore(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
-            String message = String.format("%s %d %s %d %s", "Бронь пользователя с id =", userId, "для брони вещи с id=", itemId, "ещё не закончилась");
+        if (bookingRepository.FindPastBookingsForUserAndItem(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
+            String message = String.format("%s %d %s %d", "The user with id =", userId, "don't have a completed booking with item with id=", itemId);
             log.info(message);
             throw new ValidationException(message);
         }
@@ -100,8 +105,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(long itemId, Item item, Long userId) {
+    public ItemDto updateItem(long itemId, RequestBodyItemDto requestBodyItemDto, Long userId) {
+        Item item = RequestBodyItemDtoMapper.mapRow(requestBodyItemDto);
         Item checkedItem = checkFieldsForUpdate(item, itemId, userId);
+        if (requestBodyItemDto.getRequestId() != null) {
+            ItemRequest itemRequest = getRequestById(requestBodyItemDto.getRequestId());
+            checkedItem.setItemRequest(itemRequest);
+        }
         User owner = getUserById(userId);
         checkedItem.setOwner(owner);
         checkedItem.setId(itemId);
@@ -109,15 +119,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems(Long userId) {
+    public List<ItemDto> getAllItems(Long userId, Integer from, Integer size) {
+        checkFormAndSize(from, size);
         User user = getUserById(userId);
-        return itemsToItemsDto(itemRepository.findByOwnerEqualsOrderByIdAsc(user), userId);
+        return itemsToItemsDto(itemRepository.findItemsForUserWithPage(user, PageRequest.of(from / size, size)), userId);
     }
 
     @Override
     public ItemDto getItemById(long itemId, Long userId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "The item with id =", itemId, "not found");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -125,12 +136,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemByNameOrDescription(String text, Long userId) {
+    public List<ItemDto> getItemByNameOrDescription(String text, Long userId, Integer from, Integer size) {
+        checkFormAndSize(from, size);
         if (text.equals("")) {
             return new ArrayList<>();
         }
-        System.out.println(itemRepository.findByNameContainsIgnoreCaseOrDescriptionContainsIgnoreCaseAndAvailableIsTrue(text, text));
-        return itemsToItemsDto(itemRepository.findByNameContainsIgnoreCaseOrDescriptionContainsIgnoreCaseAndAvailableIsTrue(text, text), userId);
+        return itemsToItemsDto(itemRepository.findAvailableItemsByNameOrDescription(text, text, PageRequest.of(from / size, size)), userId);
     }
 
     private List<ItemDto> itemsToItemsDto(List<Item> items, Long userId) {
@@ -142,6 +153,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemDto itemToItemDto(Item item, Long userId) {
+        if (item == null) {
+            return null;
+        }
         ItemDto itemDto = ItemDtoMapper.mapRow(item);
         setNextAndLastBookings(item, userId, itemDto);
         setComments(item, itemDto);
@@ -160,20 +174,20 @@ public class ItemServiceImpl implements ItemService {
     private void setNextAndLastBookings(Item item, Long userId, ItemDto itemDto) {
         LocalDateTime currentDate = LocalDateTime.now();
         if (userId.equals(item.getOwner().getId())) {
-            if (!bookingRepository.findBookingsByItemIsAndEndBeforeAndStatusOrderByEndDesc(item, currentDate, BookingStatus.APPROVED).isEmpty()) {
+            if (bookingRepository.findLastBooking(item.getId(), currentDate, BookingStatus.APPROVED.toString()) != null) {
                 itemDto.setLastBooking(LastAndNextBookingDtoMapper
-                        .mapRow(bookingRepository.findBookingsByItemIsAndEndBeforeAndStatusOrderByEndDesc(item, currentDate, BookingStatus.APPROVED).get(0)));
+                        .mapRow(bookingRepository.findLastBooking(item.getId(), currentDate, BookingStatus.APPROVED.toString())));
             }
-            if (!bookingRepository.findBookingsByItemIsAndStartAfterAndStatusOrderByEndAsc(item, currentDate, BookingStatus.APPROVED).isEmpty()) {
+            if (bookingRepository.findNextBooking(item.getId(), currentDate, BookingStatus.APPROVED.toString()) != null) {
                 itemDto.setNextBooking(LastAndNextBookingDtoMapper
-                        .mapRow(bookingRepository.findBookingsByItemIsAndStartAfterAndStatusOrderByEndAsc(item, currentDate, BookingStatus.APPROVED).get(0)));
+                        .mapRow(bookingRepository.findNextBooking(item.getId(), currentDate, BookingStatus.APPROVED.toString())));
             }
         }
     }
 
     private void setComments(Item item, ItemDto itemDto) {
-        if (!commentRepository.findCommentsByItemIs(item).isEmpty()) {
-            itemDto.setComments(commentsToCommentsDto(commentRepository.findCommentsByItemIs(item)));
+        if (!commentRepository.findCommentsByItem(item).isEmpty()) {
+            itemDto.setComments(commentsToCommentsDto(commentRepository.findCommentsByItem(item)));
         } else {
             itemDto.setComments(new ArrayList<>());
         }
@@ -181,18 +195,18 @@ public class ItemServiceImpl implements ItemService {
 
     private Item checkFieldsForUpdate(Item item, long itemId, Long userId) {
         if (userId == null) {
-            String message = "Не указан id владельца";
+            String message = "The userId is missing";
             log.info(message);
             throw new InternalServerException(message);
         }
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Товар с id =", itemId, "не найден");
+            String message = String.format("%s %d %s", "The item with id =", itemId, "not found");
             log.info(message);
             throw new NotFoundException(message);
         }
         Item itemFromDb = itemRepository.findById(itemId).get();
         if (!userId.equals(itemFromDb.getOwner().getId())) {
-            String message = "Попытка редактирования товара другого пользователя";
+            String message = "Only the owner can update an item";
             log.info(message);
             throw new ForbiddenException(message);
         }
@@ -210,10 +224,25 @@ public class ItemServiceImpl implements ItemService {
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            String message = String.format("%s %d %s", "The user with id =", userId, "not found");
             log.info(message);
             throw new NotFoundException(message);
         }
         return userRepository.findById(userId).get();
+    }
+
+    private ItemRequest getRequestById(Long requestId) {
+        if (itemRequestRepository.findById(requestId).isPresent()) {
+            return itemRequestRepository.findById(requestId).get();
+        }
+        return null;
+    }
+
+    private void checkFormAndSize(Integer from, Integer size) {
+        if (from < 0 || size < 1) {
+            String message = "Page number or count of elements are not valid";
+            log.info(message);
+            throw new ValidationException(message);
+        }
     }
 }
