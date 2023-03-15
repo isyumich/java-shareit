@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LastAndNextBookingMapperTest {
     TestHelper testHelper = new TestHelper();
+
     @Test
     public void toLastAndNextBookingDtoTest() {
         User booker = testHelper.getBooker();
