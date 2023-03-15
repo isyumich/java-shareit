@@ -61,26 +61,26 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approveOrRejectBooking(Long userId, long bookingId, boolean approved) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            String message = String.format("%s %d %s", "The booking with id =", bookingId, "not found");
+            String message = String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено");
             log.info(message);
             throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getItem().getOwner().getId())) {
-            String message = "Only the owner can approve or reject an item";
+            String message = "Только владелец может подтверждать/отклонять бронирование";
             log.info(message);
             throw new NotFoundException(message);
         }
         if (approved) {
             if (booking.getStatus().equals(BookingStatus.APPROVED)) {
-                String message = "This booking is already approved";
+                String message = "Бронирование уже подтверждено";
                 log.info(message);
                 throw new IsAlreadyDoneException(message);
             }
             booking.setStatus(BookingStatus.APPROVED);
         } else {
             if (booking.getStatus().equals(BookingStatus.REJECTED)) {
-                String message = "This booking is already rejected";
+                String message = "Бронирование уже отклонено";
                 log.info(message);
                 throw new IsAlreadyDoneException(message);
             }
@@ -92,13 +92,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getBookingById(Long userId, long bookingId) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            String message = String.format("%s %d %s", "The booking with id =", bookingId, "not found");
+            String message = String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено");
             log.info(message);
             throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
-            String message = "Only the item's owner or booking's author can view a booking";
+            String message = "Бронирование может просматривать либо владелец вещи либо автор бронирования";
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -156,12 +156,12 @@ public class BookingServiceImpl implements BookingService {
                 return bookingState;
             }
         }
-        throw new IllegalArgumentException("It's not valid value in the field 'state'");
+        throw new IllegalArgumentException("Поле State имеет недопустимое значение");
     }
 
     private Item getItemById(long itemId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "The item with id =", itemId, "not found");
+            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -170,7 +170,7 @@ public class BookingServiceImpl implements BookingService {
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "The user with id =", userId, "not found");
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -194,7 +194,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void checkFromAndSize(Integer from, Integer size) {
         if (from < 0 || size < 1) {
-            String message = "Page number or count of elements are not valid";
+            String message = "Номер страницы или количество элементов недопустимо";
             log.info(message);
             throw new ValidationException(message);
         }

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import ru.practicum.shareit.TestHelper;
 import ru.practicum.shareit.exception.IsAlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -35,18 +36,17 @@ public class UserServiceTest {
     @InjectMocks
     UserServiceImpl userServiceImpl;
     User user;
-    User updatedUser;
+    final TestHelper testHelper = new TestHelper();
 
     @BeforeEach
     void beforeEach() {
         when(userRepository.save(any())).thenAnswer(input -> input.getArguments()[0]);
-        user = User.builder().id(0L).name("userName1").email("userEmail1@mail.ru").build();
-        updatedUser = User.builder().id(0L).name("updatedUserName1").email("updatedUserEmail1@mail.ru").build();
+        user = testHelper.getUser();
+        user.setId(1L);
     }
 
     @Test
     void addUserTest_whenUserCorrect_thenSave() {
-        long userId = 0L;
         when(userRepository.save(user)).thenReturn(user);
         UserDto userDto = userServiceImpl.addUser(user);
 
@@ -57,7 +57,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenDuplicateEmailUser_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new IsAlreadyExistsException("A user with the same email already exists"));
+                .thenThrow(new IsAlreadyExistsException("Пользователь с таким email уже существует"));
 
         assertThrows(IsAlreadyExistsException.class,
                 () -> userServiceImpl.addUser(user));
@@ -67,7 +67,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserNameEmpty_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Имя не может быть пустым"));
         user.setName("");
 
         assertThrows(ValidationException.class,
@@ -78,7 +78,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserNameIsNull_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Имя не может быть пустым"));
         user.setName(null);
 
         assertThrows(ValidationException.class,
@@ -89,7 +89,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserNameSpace_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Имя не может быть пустым"));
         user.setName(" ");
 
         assertThrows(ValidationException.class,
@@ -100,7 +100,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserEmailEmpty_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Email не может быть пустым"));
         user.setEmail("");
 
         assertThrows(ValidationException.class,
@@ -111,7 +111,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserEmailIsNull_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Email не может быть пустым"));
         user.setEmail(null);
 
         assertThrows(ValidationException.class,
@@ -122,7 +122,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserEmailSpace_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Email не может быть пустым"));
         user.setEmail(" ");
 
         assertThrows(ValidationException.class,
@@ -133,7 +133,7 @@ public class UserServiceTest {
     @Test
     void addUserTest_whenUserEmailWithoutSymbol_thenThrowException() {
         when(userRepository.save(any()))
-                .thenThrow(new ValidationException("The field's value is not valid"));
+                .thenThrow(new ValidationException("Поле Email должно содержать символ @"));
         user.setEmail("mail.ru");
 
         assertThrows(ValidationException.class,
@@ -144,7 +144,7 @@ public class UserServiceTest {
 
     @Test
     void updateItemTest_whenCorrect_thenUpdate() {
-        long userId = 0L;
+        long userId = 1L;
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
 
         userServiceImpl.updateUser(user, userId);
@@ -165,7 +165,7 @@ public class UserServiceTest {
 
     @Test
     void getAllUsersTest() {
-        List<User> users = List.of(User.builder().name("userName1").email("userEmail1@mail.ru").build());
+        List<User> users = List.of(user);
         when(userRepository.findAll()).thenReturn(users);
         List<UserDto> usersDto = userServiceImpl.getAllUsers();
         verify(userRepository).findAll();
@@ -175,7 +175,7 @@ public class UserServiceTest {
 
     @Test
     void getUserByIdTest_whenUserPresent_thenUser() {
-        long userId = 0L;
+        long userId = 1L;
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         UserDto userDto = UserDtoMapper.mapRow(user);
         UserDto userDtoFromDb = userServiceImpl.getUserById(userId);
@@ -186,7 +186,7 @@ public class UserServiceTest {
 
     @Test
     void getUserByIdTest_whenUserNotFound_thenThrowException() {
-        long userId = 0L;
+        long userId = 1L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
@@ -195,8 +195,9 @@ public class UserServiceTest {
 
     @Test
     void deleteUserById_deletes() {
+        long userId = 1L;
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        userServiceImpl.deleteUser(0L);
-        verify(userRepository).deleteById(0L);
+        userServiceImpl.deleteUser(userId);
+        verify(userRepository).deleteById(userId);
     }
 }

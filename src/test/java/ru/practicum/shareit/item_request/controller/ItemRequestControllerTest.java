@@ -50,7 +50,7 @@ public class ItemRequestControllerTest {
     @BeforeEach
     void beforeEach() {
         itemRequestDtoCorrect = ItemRequestDto.builder().id(1L)
-                .created(LocalDateTime.now()).description("itemRequestDesc1").build();
+                .created(LocalDateTime.now()).description("itemRequestDescCorrect").build();
         itemRequestDtoEmptyDesc = ItemRequestDto.builder().id(2L)
                 .created(LocalDateTime.now()).description("").build();
     }
@@ -76,7 +76,7 @@ public class ItemRequestControllerTest {
     @SneakyThrows
     @Test
     void addItemRequestTest_whenItemRequestEmptyDesc_thenThrow() {
-        when(itemRequestService.addNewItemRequest(anyLong(), any())).thenThrow(new ValidationException("The itemRequest's description is missing"));
+        when(itemRequestService.addNewItemRequest(anyLong(), any())).thenThrow(new ValidationException("Описание не может быть пустым"));
 
         String result = mockMvc.perform(post(pathRequests)
                         .content(objectMapper.writeValueAsString(itemRequestDtoEmptyDesc))
@@ -88,7 +88,7 @@ public class ItemRequestControllerTest {
                 .getContentAsString();
 
         verify(itemRequestService).addNewItemRequest(anyLong(), any());
-        assertEquals("{\"error\":\"The itemRequest's description is missing\"}", result);
+        assertEquals("{\"error\":\"Описание не может быть пустым\"}", result);
     }
 
     @SneakyThrows

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
+import ru.practicum.shareit.TestHelper;
 
 import java.io.IOException;
 
@@ -17,11 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserDtoTest {
     @Autowired
     JacksonTester<UserDto> jacksonTester;
+    final TestHelper testHelper = new TestHelper();
 
     @Test
     void userDtoJsonTest() throws IOException {
-        long userId = 1L;
-        UserDto userDto = UserDto.builder().id(userId).name("userName1").email("userEmail1@mail.ru").build();
+        UserDto userDto = UserDtoMapper.mapRow(testHelper.getUser());
+        userDto.setId(1L);
 
         JsonContent<UserDto> result = jacksonTester.write(userDto);
 

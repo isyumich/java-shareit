@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import ru.practicum.shareit.TestHelper;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.dto.RequestBodyBookingDto;
@@ -59,16 +60,22 @@ public class BookingServiceTest {
     Booking booking;
     RequestBodyBookingDto requestBodyBookingDto;
     BookingDto bookingDto;
+    final TestHelper testHelper = new TestHelper();
+    final long userId = 1L;
+    final long bookingId = 1L;
+    final int from = 1;
+    final int size = 1;
 
     @BeforeEach
     void beforeEach() {
-        booker = User.builder().id(1L).name("author").email("author@mail.ru").build();
-        owner = User.builder().id(2L).name("owner").email("owner@mail.ru").build();
-        item = Item.builder().id(1L).name("itemName1").description("itemDesc1").owner(owner).available(true).itemRequest(null).build();
+        booker = testHelper.getBooker();
+        owner = testHelper.getOwner();
+        item = testHelper.getItem();
+        item.setOwner(owner);
         requestBodyBookingDto = RequestBodyBookingDto.builder().itemId(0L).start(LocalDateTime.now())
                 .end(LocalDateTime.now().plus(1, ChronoUnit.DAYS)).build();
-        booking = Booking.builder().id(1L).start(LocalDateTime.now()).item(null).booker(booker)
-                .end(LocalDateTime.now().plus(1, ChronoUnit.DAYS)).status(BookingStatus.APPROVED).build();
+        booking = testHelper.getBooking();
+        booking.setBooker(booker);
         bookingDto = BookingDtoMapper.mapRow(booking);
 
         when(itemRequestRepository.save(any())).thenAnswer(input -> input.getArguments()[0]);
@@ -76,7 +83,7 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenCorrect_thenSave() {
-        long userId = 1L;
+
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
 
@@ -87,7 +94,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenItemIsNotAvailable_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         item.setAvailable(false);
@@ -98,7 +104,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenStartIsNull_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setStart(null);
@@ -109,7 +114,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenEndIsNull_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setEnd(null);
@@ -120,7 +124,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenStartMoreEnd_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setStart(LocalDateTime.now().plus(100, ChronoUnit.DAYS));
@@ -131,7 +134,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenStartEqualsEnd_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setStart(requestBodyBookingDto.getEnd());
@@ -142,7 +144,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenStartLessNow_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setStart(LocalDateTime.now().minus(100, ChronoUnit.DAYS));
@@ -153,18 +154,16 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenBookerIsOwner_thenThrowException() {
-        long userId = 2L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
 
 
         assertThrows(NotFoundException.class,
-                () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, userId));
+                () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, 2L));
     }
 
     @Test
     void addBookingTest_whenItemNotFound_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
 
@@ -174,7 +173,6 @@ public class BookingServiceTest {
 
     @Test
     void addBookingTest_whenBookerNotFound_thenThrowException() {
-        long userId = 1L;
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -189,7 +187,7 @@ public class BookingServiceTest {
         booking.setItem(item);
 
         assertThrows(IsAlreadyDoneException.class,
-                () -> bookingServiceImpl.approveOrRejectBooking(2L, 1L, true));
+                () -> bookingServiceImpl.approveOrRejectBooking(owner.getId(), bookingId, true));
     }
 
     @Test
@@ -200,7 +198,7 @@ public class BookingServiceTest {
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
 
-        bookingServiceImpl.approveOrRejectBooking(2L, 1L, true);
+        bookingServiceImpl.approveOrRejectBooking(owner.getId(), bookingId, true);
 
         verify(bookingRepository).save(any());
     }
@@ -215,7 +213,7 @@ public class BookingServiceTest {
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
 
-        bookingServiceImpl.approveOrRejectBooking(2L, 1L, false);
+        bookingServiceImpl.approveOrRejectBooking(owner.getId(), bookingId, false);
         verify(bookingRepository).save(any());
     }
 
@@ -227,7 +225,7 @@ public class BookingServiceTest {
         booking.setItem(item);
 
         assertThrows(IsAlreadyDoneException.class,
-                () -> bookingServiceImpl.approveOrRejectBooking(2L, 1L, false));
+                () -> bookingServiceImpl.approveOrRejectBooking(owner.getId(), bookingId, false));
     }
 
     @Test
@@ -235,7 +233,7 @@ public class BookingServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
         assertThrows(NotFoundException.class,
-                () -> bookingServiceImpl.approveOrRejectBooking(2L, 1L, false));
+                () -> bookingServiceImpl.approveOrRejectBooking(userId, bookingId, false));
     }
 
     @Test
@@ -246,7 +244,7 @@ public class BookingServiceTest {
         booking.setItem(item);
 
         assertThrows(NotFoundException.class,
-                () -> bookingServiceImpl.approveOrRejectBooking(4L, 1L, false));
+                () -> bookingServiceImpl.approveOrRejectBooking(4L, bookingId, false));
     }
 
     @Test
@@ -254,7 +252,7 @@ public class BookingServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
 
-        BookingDto result = bookingServiceImpl.getBookingById(1L, 1L);
+        BookingDto result = bookingServiceImpl.getBookingById(booker.getId(), bookingId);
 
         verify(bookingRepository, times(2)).findById(anyLong());
         assertEquals(bookingDto, result);
@@ -266,7 +264,7 @@ public class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         verify(bookingRepository, never()).findById(anyLong());
-        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBookingById(2L, 1L));
+        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBookingById(userId, bookingId));
     }
 
     @Test
@@ -277,7 +275,7 @@ public class BookingServiceTest {
         booking.setItem(item);
 
         verify(bookingRepository, never()).findById(anyLong());
-        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBookingById(10L, 1L));
+        assertThrows(NotFoundException.class, () -> bookingServiceImpl.getBookingById(10L, bookingId));
     }
 
     @Test
@@ -285,21 +283,21 @@ public class BookingServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
         assertThrows(IllegalArgumentException.class,
-                () -> bookingServiceImpl.getBookingCurrentUser(2L, "State", 1, 1));
+                () -> bookingServiceImpl.getBookingCurrentUser(userId, "State", from, size));
     }
 
     @Test
     void getBookingCurrentUserTest_whenSizeIllegal_thenThrowException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
         assertThrows(ValidationException.class,
-                () -> bookingServiceImpl.getBookingCurrentUser(2L, "ALL", 1, -1));
+                () -> bookingServiceImpl.getBookingCurrentUser(userId, "ALL", from, -1));
     }
 
     @Test
     void getBookingCurrentUserTest_whenStateAll_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.ALL.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.ALL.toString(), from, size);
 
         verify(bookingRepository).findAllBookingsForUser(any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -309,7 +307,7 @@ public class BookingServiceTest {
     void getBookingCurrentUserTest_whenStateCurrent_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.CURRENT.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.CURRENT.toString(), from, size);
 
         verify(bookingRepository).findCurrentBookingsForUser(any(), any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -319,7 +317,7 @@ public class BookingServiceTest {
     void getBookingCurrentUserTest_whenStatePast_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.PAST.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.PAST.toString(), from, size);
 
         verify(bookingRepository).findPastBookingsForUser(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -329,7 +327,7 @@ public class BookingServiceTest {
     void getBookingCurrentUserTest_whenStateFuture_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.FUTURE.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.FUTURE.toString(), from, size);
 
         verify(bookingRepository).findFutureBookingsForUser(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -339,7 +337,7 @@ public class BookingServiceTest {
     void getBookingCurrentUserTest_whenStateWaiting_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.WAITING.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.WAITING.toString(), from, size);
 
         verify(bookingRepository).findWaitingOrRejectedBookingsForUser(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -349,7 +347,7 @@ public class BookingServiceTest {
     void getBookingCurrentUserTest_whenStateRejected_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.REJECTED.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingCurrentUser(owner.getId(), BookingState.REJECTED.toString(), from, size);
 
         verify(bookingRepository).findWaitingOrRejectedBookingsForUser(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -360,14 +358,14 @@ public class BookingServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
         assertThrows(IllegalArgumentException.class,
-                () -> bookingServiceImpl.getBookingForItemsCurrentUser(2L, "State", 1, 1));
+                () -> bookingServiceImpl.getBookingForItemsCurrentUser(2L, "State", from, size));
     }
 
     @Test
     void getBookingItemsCurrentUserTest_whenStateAll_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.ALL.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.ALL.toString(), from, size);
 
         verify(bookingRepository).findAllBookingsForItems(any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -377,7 +375,7 @@ public class BookingServiceTest {
     void getBookingItemsCurrentUserTest_whenStateCurrent_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.CURRENT.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.CURRENT.toString(), from, size);
 
         verify(bookingRepository).findCurrentBookingsForItems(any(), any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -387,7 +385,7 @@ public class BookingServiceTest {
     void getBookingItemsCurrentUserTest_whenStatePast_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.PAST.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.PAST.toString(), from, size);
 
         verify(bookingRepository).findPastBookingsForItems(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -397,7 +395,7 @@ public class BookingServiceTest {
     void getBookingItemsCurrentUserTest_whenStateFuture_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.FUTURE.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.FUTURE.toString(), from, size);
 
         verify(bookingRepository).findFutureBookingsForItems(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -407,7 +405,7 @@ public class BookingServiceTest {
     void getBookingItemsCurrentUserTest_whenStateWaiting_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.WAITING.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.WAITING.toString(), from, size);
 
         verify(bookingRepository).findWaitingOrRejectedBookingsForItems(any(), any(), any());
         assertEquals(new ArrayList<>(), result);
@@ -417,7 +415,7 @@ public class BookingServiceTest {
     void getBookingItemsCurrentUserTest_whenStateRejected_thenBookings() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
 
-        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.REJECTED.toString(), 1, 1);
+        List<BookingDto> result = bookingServiceImpl.getBookingForItemsCurrentUser(owner.getId(), BookingState.REJECTED.toString(), from, size);
 
         verify(bookingRepository).findWaitingOrRejectedBookingsForItems(any(), any(), any());
         assertEquals(new ArrayList<>(), result);

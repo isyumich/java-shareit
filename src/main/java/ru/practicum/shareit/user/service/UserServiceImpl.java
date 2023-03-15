@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.IsAlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
@@ -32,15 +31,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(User user) {
-        if (!userValidation.userValidation(user)) {
-            String message = "The field's value is not valid";
-            log.info(message);
-            throw new ValidationException(message);
-        }
+        userValidation.userValidation(user);
         try {
             return UserDtoMapper.mapRow(userRepository.save(user));
         } catch (Exception e) {
-            throw new IsAlreadyExistsException("A user with the same email already exists");
+            throw new IsAlreadyExistsException("Пользователь с таким email уже существует");
         }
 
     }
@@ -48,11 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(User user, long userId) {
         User checkedUser = checkFieldsForUpdate(user, userId);
-        if (!userValidation.userValidation(checkedUser)) {
-            String message = "The field's value is not valid";
-            log.info(message);
-            throw new ValidationException(message);
-        }
+        userValidation.userValidation(checkedUser);
         checkedUser.setId(userId);
         return UserDtoMapper.mapRow(userRepository.save(checkedUser));
     }
@@ -71,7 +62,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(long userId) {
         getUser(userId);
         userRepository.deleteById(userId);
-        log.info(String.format("%s %d %s", "The user with id =", userId, "is removed"));
+        log.info(String.format("%s %d %s", "Пользователь с id =", userId, "удалён"));
     }
 
     private User checkFieldsForUpdate(User user, long userId) {
@@ -95,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
     private User getUser(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "The user with id =", userId, "not found");
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
             log.info(message);
             throw new NotFoundException(message);
         }

@@ -49,11 +49,11 @@ public class UserControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        userDtoCorrect = UserDto.builder().id(1L).name("userName1").email("userEmail1@mail.ru").build();
-        userDtoEmptyEmail = UserDto.builder().id(2L).name("userName2").email("").build();
-        userDtoInvalidEmail = UserDto.builder().id(3L).name("userName3").email("userEmail3mail.ru").build();
-        userDtoEmptyName = UserDto.builder().id(4L).name("").email("userEmail4@mail.ru").build();
-        userDtoDuplicateEmail = UserDto.builder().id(5L).name("").email("userEmail1@mail.ru").build();
+        userDtoCorrect = UserDto.builder().id(1L).name("userCorrectName").email("userCorrectEmail@mail.ru").build();
+        userDtoEmptyEmail = UserDto.builder().id(2L).name("userEmptyEmailName").email("").build();
+        userDtoInvalidEmail = UserDto.builder().id(3L).name("userInvalidEmailName").email("userEmail3mail.ru").build();
+        userDtoEmptyName = UserDto.builder().id(4L).name("").email("userEmptyName@mail.ru").build();
+        userDtoDuplicateEmail = UserDto.builder().id(5L).name("userDuplicateEmailName").email("userEmail1@mail.ru").build();
     }
 
     @SneakyThrows
@@ -75,7 +75,7 @@ public class UserControllerTest {
     @SneakyThrows
     @Test
     void addUserTest_whenDuplicateEmailUser_thenThrow() {
-        when(userService.addUser(any())).thenThrow(new IsAlreadyExistsException("A user with the same email already exists"));
+        when(userService.addUser(any())).thenThrow(new IsAlreadyExistsException("Пользователь с таким email уже существует"));
 
         String result = mockMvc.perform(post(pathUsers)
                         .content(objectMapper.writeValueAsString(userDtoDuplicateEmail))
@@ -85,13 +85,13 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(userService).addUser(any());
-        assertEquals("{\"error\":\"A user with the same email already exists\"}", result);
+        assertEquals("{\"error\":\"Пользователь с таким email уже существует\"}", result);
     }
 
     @SneakyThrows
     @Test
     void addUserTest_whenEmptyEmail_thenBadRequest() {
-        when(userService.addUser(any())).thenThrow(new ValidationException("The field's value is not valid"));
+        when(userService.addUser(any())).thenThrow(new ValidationException("Email не может быть пустым"));
 
         String result = mockMvc.perform(post(pathUsers)
                         .content(objectMapper.writeValueAsString(userDtoEmptyEmail))
@@ -101,13 +101,13 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(userService).addUser(any());
-        assertEquals("{\"error\":\"The field's value is not valid\"}", result);
+        assertEquals("{\"error\":\"Email не может быть пустым\"}", result);
     }
 
     @SneakyThrows
     @Test
     void addUserTest_whenInvalidEmail_thenBadRequest() {
-        when(userService.addUser(any())).thenThrow(new ValidationException("The field's value is not valid"));
+        when(userService.addUser(any())).thenThrow(new ValidationException("Поле Email должно содержать символ @"));
 
         String result = mockMvc.perform(post(pathUsers)
                         .content(objectMapper.writeValueAsString(userDtoInvalidEmail))
@@ -117,13 +117,13 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(userService).addUser(any());
-        assertEquals("{\"error\":\"The field's value is not valid\"}", result);
+        assertEquals("{\"error\":\"Поле Email должно содержать символ @\"}", result);
     }
 
     @SneakyThrows
     @Test
     void addUserTest_whenEmptyName_thenBadRequest() {
-        when(userService.addUser(any())).thenThrow(new ValidationException("The field's value is not valid"));
+        when(userService.addUser(any())).thenThrow(new ValidationException("Имя не может быть пустым"));
 
         String result = mockMvc.perform(post(pathUsers)
                         .content(objectMapper.writeValueAsString(userDtoEmptyName))
@@ -133,7 +133,7 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(userService).addUser(any());
-        assertEquals("{\"error\":\"The field's value is not valid\"}", result);
+        assertEquals("{\"error\":\"Имя не может быть пустым\"}", result);
     }
 
     @SneakyThrows
@@ -167,7 +167,7 @@ public class UserControllerTest {
     @Test
     void getUserByIdTest_whenIsNotPresent_thenThrow() {
         long userId = 1L;
-        when(userService.getUserById(userId)).thenThrow(new NotFoundException(String.format("%s %d %s", "The user with id =", userId, "not found")));
+        when(userService.getUserById(userId)).thenThrow(new NotFoundException(String.format("%s %d %s", "Пользователь с id =", userId, "не найден")));
         mockMvc.perform(get(pathUsers + pathUserId, userId))
                 .andExpect(status().is4xxClientError());
         verify(userService).getUserById(userId);

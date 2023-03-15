@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.TestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,11 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserRepositoryTest {
     @Autowired
     UserRepository userRepository;
+    final TestHelper testHelper = new TestHelper();
 
     @BeforeEach
     void beforeEach() {
-        userRepository.save(User.builder().name("userName1").email("userEmail1@mail.ru").build());
-        userRepository.save(User.builder().name("userName2").email("userEmail2@mail.ru").build());
+        userRepository.save(testHelper.getUser());
+        userRepository.save(testHelper.getSecondUser());
     }
 
     @AfterEach

@@ -82,7 +82,7 @@ public class BookingControllerTest {
     @SneakyThrows
     @Test
     void addBookingTest_whenBookingEndEmpty_thenThrow() {
-        when(bookingService.addNewBooking(any(), anyLong())).thenThrow(new ValidationException("Start date and end date must not be null"));
+        when(bookingService.addNewBooking(any(), anyLong())).thenThrow(new ValidationException("ƒата начала и окончани€ бронировани€ не должны быть пустыми"));
 
         String result = mockMvc.perform(post(pathBookings)
                         .content(objectMapper.writeValueAsString(bookingDtoEmptyEnd))
@@ -94,7 +94,7 @@ public class BookingControllerTest {
                 .getContentAsString();
 
         verify(bookingService).addNewBooking(any(), anyLong());
-        assertEquals("{\"error\":\"Start date and end date must not be null\"}", result);
+        assertEquals("{\"error\":\"ƒата начала и окончани€ бронировани€ не должны быть пустыми\"}", result);
     }
 
     @SneakyThrows
@@ -121,7 +121,7 @@ public class BookingControllerTest {
     void approveBookingTest_whenBookingIsAlreadyApproved_thenThrow() {
         long bookingId = 3L;
         when(bookingService.approveOrRejectBooking(anyLong(), anyLong(), anyBoolean()))
-                .thenThrow(new IsAlreadyDoneException("This booking is already approved"));
+                .thenThrow(new IsAlreadyDoneException("Ѕронирование уже подтверждено"));
 
         String result = mockMvc.perform(patch(pathBookings + pathBookingId, bookingId)
                         .param("approved", "true")
@@ -133,7 +133,7 @@ public class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(bookingService).approveOrRejectBooking(anyLong(), anyLong(), anyBoolean());
-        assertEquals("{\"error\":\"This booking is already approved\"}", result);
+        assertEquals("{\"error\":\"Ѕронирование уже подтверждено\"}", result);
     }
 
     @SneakyThrows

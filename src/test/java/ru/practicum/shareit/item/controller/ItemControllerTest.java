@@ -79,7 +79,7 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void addItemTest_whenBookingNameEmpty_thenThrow() {
-        when(itemService.addNewItem(any(), anyLong())).thenThrow(new ValidationException("The fields are not valid or userId is missing"));
+        when(itemService.addNewItem(any(), anyLong())).thenThrow(new ValidationException("Имя не может быть пустым"));
 
         String result = mockMvc.perform(post(pathItems)
                         .content(objectMapper.writeValueAsString(itemDtoEmptyName))
@@ -91,7 +91,7 @@ public class ItemControllerTest {
                 .getContentAsString();
 
         verify(itemService).addNewItem(any(), anyLong());
-        assertEquals("{\"error\":\"The fields are not valid or userId is missing\"}", result);
+        assertEquals("{\"error\":\"Имя не может быть пустым\"}", result);
     }
 
     @SneakyThrows
@@ -114,7 +114,7 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void addCommentTest_whenCommentTextEmpty_thenThrow() {
-        when(itemService.addNewComment(any(), anyLong(), anyLong())).thenThrow(new ValidationException("The comment's text is missing"));
+        when(itemService.addNewComment(any(), anyLong(), anyLong())).thenThrow(new ValidationException("Текст комментария должен быть указан"));
 
         String result = mockMvc.perform(post(pathItems + pathItemId + pathComment, 1)
                         .content(objectMapper.writeValueAsString(commentDtoEmptyText))
@@ -126,7 +126,7 @@ public class ItemControllerTest {
                 .getContentAsString();
 
         verify(itemService).addNewComment(any(), anyLong(), anyLong());
-        assertEquals("{\"error\":\"The comment's text is missing\"}", result);
+        assertEquals("{\"error\":\"Текст комментария должен быть указан\"}", result);
     }
 
 

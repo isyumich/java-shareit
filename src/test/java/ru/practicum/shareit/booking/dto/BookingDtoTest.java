@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
-import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.TestHelper;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,13 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingDtoTest {
     @Autowired
     JacksonTester<BookingDto> jacksonTester;
+    final TestHelper testHelper = new TestHelper();
 
     @Test
     void bookingDtoJsonTest() throws IOException {
-        LocalDateTime start = LocalDateTime.now();
-        LocalDateTime end = LocalDateTime.now().plus(1, ChronoUnit.DAYS);
-        long bookingId = 1L;
-        BookingDto bookingDto = BookingDto.builder().id(bookingId).start(start).end(end).status(BookingStatus.APPROVED).build();
+        BookingDto bookingDto = BookingDtoMapper.mapRow(testHelper.getBooking());
 
         JsonContent<BookingDto> result = jacksonTester.write(bookingDto);
 

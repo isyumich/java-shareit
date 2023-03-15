@@ -7,11 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import ru.practicum.shareit.TestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,13 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BookingRepositoryTest {
     @Autowired
     BookingRepository bookingRepository;
+    final TestHelper testHelper = new TestHelper();
 
     @BeforeEach
     void beforeEach() {
-        bookingRepository.save(Booking.builder().start(LocalDateTime.now()).end(LocalDateTime.now()
-                .plus(1, ChronoUnit.DAYS)).status(BookingStatus.APPROVED).build());
-        bookingRepository.save(Booking.builder().start(LocalDateTime.now().plus(3, ChronoUnit.DAYS)).end(LocalDateTime.now()
-                .plus(1, ChronoUnit.DAYS)).status(BookingStatus.APPROVED).build());
+        bookingRepository.save(testHelper.getBooking());
     }
 
     @AfterEach
@@ -36,6 +30,6 @@ public class BookingRepositoryTest {
 
     @Test
     void saveBookingsTest() {
-        assertEquals(bookingRepository.findAll().size(), 2);
+        assertEquals(bookingRepository.findAll().size(), 1);
     }
 }

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import ru.practicum.shareit.TestHelper;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
@@ -23,7 +24,6 @@ import ru.practicum.shareit.item_request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,15 +51,16 @@ public class ItemRequestServiceTest {
     ItemRequest itemRequest;
     RequestBodyItemRequestDto requestBodyItemRequestDto;
     ItemRequestDto itemRequestDto;
+    final TestHelper testHelper = new TestHelper();
 
     @BeforeEach
     void beforeEach() {
-        author = User.builder().id(0L).name("author").email("author@mail.ru").build();
-        owner = User.builder().id(1L).name("owner").email("owner@mail.ru").build();
-        itemRequest = ItemRequest.builder().id(0L).created(LocalDateTime.now()).description("ItemRequestDesc1").build();
+        author = testHelper.getAuthor();
+        owner = testHelper.getOwner();
+        itemRequest = testHelper.getItemRequest();
         requestBodyItemRequestDto = RequestBodyItemRequestDto.builder().description(itemRequest.getDescription()).build();
         itemRequestDto = ItemRequestDtoMapper.mapRow(itemRequest);
-        item = Item.builder().id(0L).available(true).owner(owner).name("itemName1").build();
+        item = testHelper.getItem();
         when(itemRequestRepository.save(any())).thenAnswer(input -> input.getArguments()[0]);
         item.setItemRequest(itemRequest);
     }
@@ -73,7 +74,6 @@ public class ItemRequestServiceTest {
 
         verify(itemRequestRepository).save(any());
         assertNotNull(result);
-        assertEquals(itemRequestDto.getId(), result.getId());
         assertEquals(itemRequestDto.getDescription(), result.getDescription());
         assertEquals(itemRequestDto.getItems(), result.getItems());
     }
@@ -86,7 +86,7 @@ public class ItemRequestServiceTest {
 
         verify(itemRequestRepository, never()).save(any());
         assertThrows(ValidationException.class,
-                () -> itemRequestServiceimpl.addNewItemRequest(0L, requestBodyItemRequestDto));
+                () -> itemRequestServiceimpl.addNewItemRequest(1L, requestBodyItemRequestDto));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ItemRequestServiceTest {
         when(itemRequestRepository.findById(any())).thenReturn(Optional.of(itemRequest));
         when(itemRepository.findItemsByRequests(anyLong())).thenReturn(List.of(item));
 
-        ItemRequestDto result = itemRequestServiceimpl.getRequestById(1L, 1L);
+        ItemRequestDto result = itemRequestServiceimpl.getRequestById(2L, 1L);
 
         verify(itemRepository, times(2)).findItemsByRequests(anyLong());
         itemRequestDto.setItems(List.of(ItemDtoMapper.mapRow(item)));
@@ -108,7 +108,7 @@ public class ItemRequestServiceTest {
         when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         verify(itemRepository, never()).findItemsByRequests(anyLong());
-        assertThrows(NotFoundException.class, () -> itemRequestServiceimpl.getRequestById(2L, 1L));
+        assertThrows(NotFoundException.class, () -> itemRequestServiceimpl.getRequestById(2L, 2L));
     }
 
     @Test

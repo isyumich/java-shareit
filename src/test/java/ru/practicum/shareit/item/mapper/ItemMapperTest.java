@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.mapper;
 
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.TestHelper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -9,9 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ItemMapperTest {
+    final TestHelper testHelper = new TestHelper();
     @Test
     public void toItemDtoTest() {
-        Item item = Item.builder().id(1L).name("itemName").description("itemDesc").available(true).build();
+        Item item = testHelper.getItem();
 
         ItemDto itemDto = ItemDtoMapper.mapRow(item);
 

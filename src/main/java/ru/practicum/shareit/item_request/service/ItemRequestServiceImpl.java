@@ -48,11 +48,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto addNewItemRequest(Long userId, RequestBodyItemRequestDto requestBodyItemRequestDto) {
         ItemRequest itemRequest = createItemRequest(requestBodyItemRequestDto, userId);
-        if (!itemRequestValidation.itemRequestValidation(requestBodyItemRequestDto)) {
-            String message = "The itemRequest's description is missing";
-            log.info(message);
-            throw new ValidationException(message);
-        }
+        itemRequestValidation.itemRequestValidation(requestBodyItemRequestDto);
         return itemRequestToItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 
@@ -66,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllItemRequests(Integer from, Integer size, Long userId) {
         User user = getUserById(userId);
         if (from < 0 || size < 1) {
-            String message = "Page number or count of elements are not valid";
+            String message = "Количество элементов или номер страницы указаны некорректно";
             log.info(message);
             throw new ValidationException(message);
         }
@@ -77,7 +73,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto getRequestById(Long userId, long requestId) {
         getUserById(userId);
         if (itemRequestRepository.findById(requestId).isEmpty()) {
-            String message = String.format("%s %d %s", "The itemRequest with id =", userId, "not found");
+            String message = String.format("%s %d %s", "Заявка с id =", userId, "не найдена");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -113,7 +109,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private User getUserById(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "The user with id =", userId, "not found");
+            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
             log.info(message);
             throw new NotFoundException(message);
         }
