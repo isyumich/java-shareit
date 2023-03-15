@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ItemRequestMapperTest {
     TestHelper testHelper = new TestHelper();
+
     @Test
     public void toItemRequestDtoTest() {
         ItemRequest itemRequest = testHelper.getItemRequest();

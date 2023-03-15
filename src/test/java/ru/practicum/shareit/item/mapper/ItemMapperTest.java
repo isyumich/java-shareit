@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ItemMapperTest {
     final TestHelper testHelper = new TestHelper();
+
     @Test
     public void toItemDtoTest() {
         Item item = testHelper.getItem();

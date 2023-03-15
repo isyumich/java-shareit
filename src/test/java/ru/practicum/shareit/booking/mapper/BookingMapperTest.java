@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class BookingMapperTest {
     TestHelper testHelper = new TestHelper();
+
     @Test
     public void toBookingDtoTest() {
         Booking booking = testHelper.getBooking();
