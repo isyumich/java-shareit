@@ -1,30 +1,30 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.RequestBodyItemDto;
 
 public class ItemValidation {
-    public boolean itemValidation(Item item, Long userId) {
-        return nameValidation(item) && descriptionValidation(item) && availableValidation(item) && ownerIdValidation(userId);
+    public boolean itemValidation(RequestBodyItemDto requestBodyItemDto, Long userId) {
+        return nameValidation(requestBodyItemDto) && descriptionValidation(requestBodyItemDto) && availableValidation(requestBodyItemDto) && ownerIdValidation(userId);
     }
 
-    private boolean nameValidation(Item item) {
-        if (item.getName() == null) {
+    private boolean nameValidation(RequestBodyItemDto requestBodyItemDto) {
+        if (requestBodyItemDto.getName() == null) {
             return false;
         } else {
-            return !item.getName().equals("") && !item.getName().equals(" ");
+            return !requestBodyItemDto.getName().equals("") && !requestBodyItemDto.getName().equals(" ");
         }
     }
 
-    private boolean descriptionValidation(Item item) {
-        if (item.getDescription() == null) {
+    private boolean descriptionValidation(RequestBodyItemDto requestBodyItemDto) {
+        if (requestBodyItemDto.getDescription() == null) {
             return false;
         } else {
-            return !item.getDescription().equals("") && !item.getDescription().equals(" ");
+            return !requestBodyItemDto.getDescription().equals("") && !requestBodyItemDto.getDescription().equals(" ");
         }
     }
 
-    private boolean availableValidation(Item item) {
-        return item.getAvailable() != null;
+    private boolean availableValidation(RequestBodyItemDto requestBodyItemDto) {
+        return requestBodyItemDto.getAvailable() != null;
     }
 
     private boolean ownerIdValidation(Long userId) {

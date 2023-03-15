@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
@@ -17,47 +17,45 @@ import java.util.List;
 @RequestMapping(path = "/users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserController {
-    final UserServiceImpl userServiceImpl;
+    final UserService userService;
 
     final String pathUserId = "/{userId}";
 
     @Autowired
-    public UserController(@Qualifier("UserServiceImpl") UserServiceImpl userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public UserController(@Qualifier("UserServiceImpl") UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping
     public UserDto addNewUser(@RequestBody User user) {
-        log.info("Запрос на создание нового пользователя");
-        return userServiceImpl.addUser(user);
+        log.info("The request for adding a new user");
+        return userService.addUser(user);
     }
 
 
     @PatchMapping(pathUserId)
     public UserDto updateUser(@PathVariable long userId, @RequestBody User user) {
-        log.info(String.format("%s %d", "Запрос на изменение пользователя с id =", userId));
-        return userServiceImpl.updateUser(user, userId);
+        log.info(String.format("%s %d", "The request for changing the user with id =", userId));
+        return userService.updateUser(user, userId);
     }
 
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        log.info("Запрос на вывод всех пользователей");
-        return userServiceImpl.getAllUsers();
+        log.info("The request for getting all users");
+        return userService.getAllUsers();
     }
 
     @GetMapping(pathUserId)
     public UserDto getUserById(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Запрос на вывод пользователя с id =", userId));
-        return userServiceImpl.getUserById(userId);
+        log.info(String.format("%s %d", "The request for getting the user with id =", userId));
+        return userService.getUserById(userId);
     }
 
 
     @DeleteMapping(pathUserId)
     public void deleteUser(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Запрос на удаление пользователя с id =", userId));
-        userServiceImpl.deleteUser(userId);
+        log.info(String.format("%s %d", "The request for deletion the user with id =", userId));
+        userService.deleteUser(userId);
     }
-
-
 }

@@ -4,10 +4,10 @@ import ru.practicum.shareit.item.model.Comment;
 
 public class CommentValidation {
     public boolean commentValidation(Comment comment) {
-        return nameValidation(comment);
+        return textValidation(comment);
     }
 
-    private boolean nameValidation(Comment comment) {
+    private boolean textValidation(Comment comment) {
         if (comment.getText() == null) {
             return false;
         } else {

@@ -18,22 +18,25 @@ public class BookingValidation {
 
     private void itemAvailableValidation(Item item) {
         if (!item.getAvailable()) {
-            throw new ValidationException("Данная вещь недоступна для бронирования");
+            throw new ValidationException("This item is not available for booking");
         }
     }
 
     private void startOrEndDateValidation(RequestBodyBookingDto requestBooking) {
-        if (requestBooking.getStart().isAfter(requestBooking.getEnd())) {
-            throw new ValidationException("Дата начала бронирования должна быть меньше даты окончания");
+        if (requestBooking.getStart() == null || requestBooking.getEnd() == null) {
+            throw new ValidationException("Start date and end date must not be null");
+        }
+        if (requestBooking.getStart().isAfter(requestBooking.getEnd()) || requestBooking.getStart().equals(requestBooking.getEnd())) {
+            throw new ValidationException("The booking start date must be less than the end date");
         }
         if (requestBooking.getStart().isBefore(currentDate)) {
-            throw new ValidationException("Дата начала бронирования не должна быть меньше текущей даты");
+            throw new ValidationException("The booking start date must not be less than current date");
         }
     }
 
     private void bookerIsNotOwnerValidation(Long userId, Item item) {
         if (item.getOwner().getId() == userId) {
-            throw new NotFoundException("Владелец вещи не может её бронировать");
+            throw new NotFoundException("The owner can't book an item");
         }
     }
 
