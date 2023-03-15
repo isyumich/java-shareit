@@ -106,6 +106,16 @@ public class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
+    void getOwnItemRequestsTest() {
+        when(itemRequestService.getOwnItemRequests(anyLong())).thenReturn(List.of(itemRequestDtoCorrect));
+
+        mockMvc.perform(get(pathRequests).header(headerUserValue, 1)).andExpect(status().is2xxSuccessful());
+
+        verify(itemRequestService).getOwnItemRequests(anyLong());
+    }
+
+    @SneakyThrows
+    @Test
     void getItemRequestByIdTest() {
         when(itemRequestService.getRequestById(anyLong(), anyLong())).thenReturn(itemRequestDtoCorrect);
 

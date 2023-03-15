@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(User user, long userId) {
         User checkedUser = checkFieldsForUpdate(user, userId);
-        System.out.println("ПРОВЕРКА");
         if (!userValidation.userValidation(checkedUser)) {
             String message = "The field's value is not valid";
             log.info(message);

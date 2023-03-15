@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -75,6 +76,17 @@ public class ItemRequestServiceTest {
         assertEquals(itemRequestDto.getId(), result.getId());
         assertEquals(itemRequestDto.getDescription(), result.getDescription());
         assertEquals(itemRequestDto.getItems(), result.getItems());
+    }
+
+    @Test
+    void addItemRequestTest_whenDescIsMissing_thenThrowException() {
+        itemRequestDto.setItems(new ArrayList<>());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(author));
+        requestBodyItemRequestDto.setDescription("");
+
+        verify(itemRequestRepository, never()).save(any());
+        assertThrows(ValidationException.class,
+                () -> itemRequestServiceimpl.addNewItemRequest(0L, requestBodyItemRequestDto));
     }
 
     @Test

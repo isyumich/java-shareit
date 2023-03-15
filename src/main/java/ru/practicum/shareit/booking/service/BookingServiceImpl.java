@@ -111,8 +111,6 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentDate = LocalDateTime.now();
         User user = getUserById(userId);
         switch (getBookingStateValue(state)) {
-            case ALL:
-                return bookingsToBookingsDto(bookingRepository.findAllBookingsForUser(user, PageRequest.of(from / size, size)));
             case CURRENT:
                 return bookingsToBookingsDto(bookingRepository.findCurrentBookingsForUser(user, currentDate, currentDate, PageRequest.of(from / size, size)));
             case PAST:
@@ -124,9 +122,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 return bookingsToBookingsDto(bookingRepository.findWaitingOrRejectedBookingsForUser(user, BookingStatus.REJECTED, PageRequest.of(from / size, size)));
             default:
-                String message = "The status is not valid";
-                log.info(message);
-                throw new UnsupportedOperationException(message);
+                return bookingsToBookingsDto(bookingRepository.findAllBookingsForUser(user, PageRequest.of(from / size, size)));
         }
     }
 
@@ -138,8 +134,6 @@ public class BookingServiceImpl implements BookingService {
         List<Item> items = itemRepository.findItemsForUser(user);
 
         switch (getBookingStateValue(state)) {
-            case ALL:
-                return bookingsToBookingsDto(bookingRepository.findAllBookingsForItems(items, PageRequest.of(from / size, size)));
             case CURRENT:
                 return bookingsToBookingsDto(bookingRepository.findCurrentBookingsForItems(items, currentDate, currentDate, PageRequest.of(from / size, size)));
             case PAST:
@@ -151,9 +145,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED:
                 return bookingsToBookingsDto(bookingRepository.findWaitingOrRejectedBookingsForItems(items, BookingStatus.REJECTED, PageRequest.of(from / size, size)));
             default:
-                String message = "The status is not valid";
-                log.info(message);
-                throw new UnsupportedOperationException(message);
+                return bookingsToBookingsDto(bookingRepository.findAllBookingsForItems(items, PageRequest.of(from / size, size)));
         }
     }
 

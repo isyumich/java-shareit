@@ -33,6 +33,8 @@ public class BookingDtoTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo((int) bookingDto.getId());
         assertThat(result).extractingJsonPathStringValue("$.start").isNotBlank();
         assertThat(result).extractingJsonPathStringValue("$.end").isNotBlank();
+        assertThat(result).extractingJsonPathStringValue("$.item").isBlank();
+        assertThat(result).extractingJsonPathStringValue("$.booker").isBlank();
         assertThat(result).extractingJsonPathStringValue("$.status").isEqualTo(bookingDto.getStatus().toString());
     }
 }
