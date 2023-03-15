@@ -20,6 +20,7 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.IsAlreadyDoneException;
 import ru.practicum.shareit.exception.ValidationException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -74,7 +75,7 @@ public class BookingControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(bookingService).addNewBooking(any(), anyLong());
         assertEquals(objectMapper.writeValueAsString(bookingDtoCorrect), result);
     }
@@ -82,7 +83,8 @@ public class BookingControllerTest {
     @SneakyThrows
     @Test
     void addBookingTest_whenBookingEndEmpty_thenThrow() {
-        when(bookingService.addNewBooking(any(), anyLong())).thenThrow(new ValidationException("Дата начала и окончания бронирования не должны быть пустыми"));
+        when(bookingService.addNewBooking(any(), anyLong()))
+                .thenThrow(new ValidationException("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° Рё РґР°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ Р±СЂРѕРЅРёСЂРѕРІР°РёСЏ РЅРµ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РїСѓСЃС‚С‹РјРё"));
 
         String result = mockMvc.perform(post(pathBookings)
                         .content(objectMapper.writeValueAsString(bookingDtoEmptyEnd))
@@ -91,10 +93,10 @@ public class BookingControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
 
         verify(bookingService).addNewBooking(any(), anyLong());
-        assertEquals("{\"error\":\"Дата начала и окончания бронирования не должны быть пустыми\"}", result);
+        assertEquals("{\"error\":\"Р”Р°С‚Р° РЅР°С‡Р°Р»Р° Рё РґР°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ Р±СЂРѕРЅРёСЂРѕРІР°РёСЏ РЅРµ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РїСѓСЃС‚С‹РјРё\"}", result);
     }
 
     @SneakyThrows
@@ -111,7 +113,7 @@ public class BookingControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(bookingService).approveOrRejectBooking(anyLong(), anyLong(), anyBoolean());
         assertEquals(objectMapper.writeValueAsString(bookingDtoCorrect), result);
     }
@@ -121,7 +123,7 @@ public class BookingControllerTest {
     void approveBookingTest_whenBookingIsAlreadyApproved_thenThrow() {
         long bookingId = 3L;
         when(bookingService.approveOrRejectBooking(anyLong(), anyLong(), anyBoolean()))
-                .thenThrow(new IsAlreadyDoneException("Бронирование уже подтверждено"));
+                .thenThrow(new IsAlreadyDoneException("Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СѓР¶Рµ Р±С‹Р»Рѕ РїРѕРґС‚РІРµСЂР¶РґРµРЅРѕ"));
 
         String result = mockMvc.perform(patch(pathBookings + pathBookingId, bookingId)
                         .param("approved", "true")
@@ -131,9 +133,9 @@ public class BookingControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(bookingService).approveOrRejectBooking(anyLong(), anyLong(), anyBoolean());
-        assertEquals("{\"error\":\"Бронирование уже подтверждено\"}", result);
+        assertEquals("{\"error\":\"Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СѓР¶Рµ Р±С‹Р»Рѕ РїРѕРґС‚РІРµСЂР¶РґРµРЅРѕ\"}", result);
     }
 
     @SneakyThrows

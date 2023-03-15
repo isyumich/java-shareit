@@ -61,26 +61,26 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approveOrRejectBooking(Long userId, long bookingId, boolean approved) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            String message = String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено");
+            String message = String.format("%s %d %s", "Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СЃ id =", bookingId, "РЅРµ РЅР°Р№РґРµРЅРѕ");
             log.info(message);
             throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getItem().getOwner().getId())) {
-            String message = "Только владелец может подтверждать/отклонять бронирование";
+            String message = "РџРѕРґС‚РІРµСЂР¶РґР°С‚СЊ РёР»Рё РѕС‚РєР»РѕРЅСЏС‚СЊ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёРµ РјРѕР¶РµС‚ С‚РѕР»СЊРєРѕ РІР»Р°РґРµР»РµС† РІРµС‰Рё";
             log.info(message);
             throw new NotFoundException(message);
         }
         if (approved) {
             if (booking.getStatus().equals(BookingStatus.APPROVED)) {
-                String message = "Бронирование уже подтверждено";
+                String message = "Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СѓР¶Рµ Р±С‹Р»Рѕ РїРѕРґС‚РІРµСЂР¶РґРµРЅРѕ";
                 log.info(message);
                 throw new IsAlreadyDoneException(message);
             }
             booking.setStatus(BookingStatus.APPROVED);
         } else {
             if (booking.getStatus().equals(BookingStatus.REJECTED)) {
-                String message = "Бронирование уже отклонено";
+                String message = "Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СѓР¶Рµ Р±С‹Р»Рѕ РѕС‚РєР»РѕРЅРµРЅРѕ";
                 log.info(message);
                 throw new IsAlreadyDoneException(message);
             }
@@ -92,13 +92,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto getBookingById(Long userId, long bookingId) {
         if (bookingRepository.findById(bookingId).isEmpty()) {
-            String message = String.format("%s %d %s", "Бронирование с id =", bookingId, "не найдено");
+            String message = String.format("%s %d %s", "Р‘СЂРѕРЅРёСЂРѕРІР°РЅРёРµ СЃ id =", bookingId, "РЅРµ РЅР°Р№РґРµРЅРѕ");
             log.info(message);
             throw new NotFoundException(message);
         }
         Booking booking = bookingRepository.findById(bookingId).get();
         if (!userId.equals(booking.getBooker().getId()) && !userId.equals(booking.getItem().getOwner().getId())) {
-            String message = "Бронирование может просматривать либо владелец вещи либо автор бронирования";
+            String message = "РџСЂРѕСЃРјР°С‚СЂРёРІР°С‚СЊ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёРµ РјРѕР¶РµС‚ Р»РёР±Рѕ Р°РІС‚РѕСЂ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ Р»РёР±Рѕ РІР»Р°РґРµР»РµС† РІРµС‰Рё";
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -156,12 +156,12 @@ public class BookingServiceImpl implements BookingService {
                 return bookingState;
             }
         }
-        throw new IllegalArgumentException("Поле State имеет недопустимое значение");
+        throw new IllegalArgumentException("РџРѕР»Рµ State РёРјРµРµС‚ РЅРµРґРѕРїСѓСЃС‚РёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ");
     }
 
     private Item getItemById(long itemId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "Р’РµС‰СЊ СЃ id =", itemId, "РЅРµ РЅР°Р№РґРµРЅР°");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -170,7 +170,7 @@ public class BookingServiceImpl implements BookingService {
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            String message = String.format("%s %d %s", "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ id =", userId, "РЅРµ РЅР°Р№РґРµРЅ");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -194,7 +194,7 @@ public class BookingServiceImpl implements BookingService {
 
     private void checkFromAndSize(Integer from, Integer size) {
         if (from < 0 || size < 1) {
-            String message = "Номер страницы или количество элементов недопустимо";
+            String message = "РќРѕРјРµСЂ СЃС‚СЂР°РЅРёС†С‹ РёР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РЅРµРґРѕРїСѓСЃС‚РёРјРѕ";
             log.info(message);
             throw new ValidationException(message);
         }

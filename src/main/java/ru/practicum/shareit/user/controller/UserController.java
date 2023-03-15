@@ -28,34 +28,34 @@ public class UserController {
 
     @PostMapping
     public UserDto addNewUser(@RequestBody User user) {
-        log.info("Заявка на создание нового пользователя");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ");
         return userService.addUser(user);
     }
 
 
     @PatchMapping(pathUserId)
     public UserDto updateUser(@PathVariable long userId, @RequestBody User user) {
-        log.info(String.format("%s %d", "Запрос на изменение пользователя с id =", userId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РёР·РјРµРЅРµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId));
         return userService.updateUser(user, userId);
     }
 
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        log.info("Запрос на получение всех пользователей");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№");
         return userService.getAllUsers();
     }
 
     @GetMapping(pathUserId)
     public UserDto getUserById(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Запрос на получение пользователя с id =", userId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId));
         return userService.getUserById(userId);
     }
 
 
     @DeleteMapping(pathUserId)
     public void deleteUser(@PathVariable long userId) {
-        log.info(String.format("%s %d", "Запрос на удаление пользователя с id =", userId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° СѓРґР°Р»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId));
         userService.deleteUser(userId);
     }
 }

@@ -31,20 +31,20 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addNewItem(@RequestHeader(value = headerUserValue, required = false) Long userId, @RequestBody RequestBodyItemDto requestBodyItemDto) {
-        log.info("Запрос на создание новой вещи");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ РІРµС‰Рё");
         return itemService.addNewItem(requestBodyItemDto, userId);
     }
 
     @PostMapping(pathIdItem + "/comment")
     public CommentDto addNewComment(@RequestHeader(value = headerUserValue, required = false) Long userId, @RequestBody Comment comment, @PathVariable long itemId) {
-        log.info("Запрос на создание нового комментария");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ РєРѕРјРјРµРЅС‚Р°СЂРёСЏ");
         return itemService.addNewComment(comment, userId, itemId);
     }
 
 
     @PatchMapping(pathIdItem)
     public ItemDto updateItem(@RequestHeader(value = headerUserValue, required = false) Long userId, @PathVariable long itemId, @RequestBody RequestBodyItemDto requestBodyItemDto) {
-        log.info(String.format("%s %d", "Запрос на изменение вещи с id =", itemId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РёР·РјРµРЅРµРЅРёРµ РІРµС‰Рё СЃ id =", itemId));
         return itemService.updateItem(itemId, requestBodyItemDto, userId);
     }
 
@@ -53,13 +53,13 @@ public class ItemController {
     public List<ItemDto> getAllItems(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                      @RequestParam(defaultValue = "0") Integer from,
                                      @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Запрос на получение всех вещей");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… РІРµС‰РµР№");
         return itemService.getAllItems(userId, from, size);
     }
 
     @GetMapping(pathIdItem)
     public ItemDto getItemById(@RequestHeader(value = headerUserValue, required = false) Long userId, @PathVariable long itemId) {
-        log.info(String.format("%s %d", "Запрос на получение вещи с id =", itemId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РІРµС‰Рё СЃ id =", itemId));
         return itemService.getItemById(itemId, userId);
     }
 
@@ -68,7 +68,7 @@ public class ItemController {
                                                     @RequestParam String text,
                                                     @RequestParam(defaultValue = "0") Integer from,
                                                     @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Запрос на получение вещи по имени или описанию");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РІРµС‰РµР№ РїРѕ РёРјРµРЅРё РёР»Рё РѕРїРёСЃР°РЅРёСЋ");
         return itemService.getItemByNameOrDescription(text, userId, from, size);
     }
 }

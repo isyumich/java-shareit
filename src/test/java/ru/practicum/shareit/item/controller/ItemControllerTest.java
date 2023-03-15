@@ -19,6 +19,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +72,7 @@ public class ItemControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(itemService).addNewItem(any(), anyLong());
         assertEquals(objectMapper.writeValueAsString(itemDtoCorrect), result);
     }
@@ -79,7 +80,7 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void addItemTest_whenBookingNameEmpty_thenThrow() {
-        when(itemService.addNewItem(any(), anyLong())).thenThrow(new ValidationException("Имя не может быть пустым"));
+        when(itemService.addNewItem(any(), anyLong())).thenThrow(new ValidationException("РќР°Р·РІР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј"));
 
         String result = mockMvc.perform(post(pathItems)
                         .content(objectMapper.writeValueAsString(itemDtoEmptyName))
@@ -88,10 +89,10 @@ public class ItemControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
 
         verify(itemService).addNewItem(any(), anyLong());
-        assertEquals("{\"error\":\"Имя не может быть пустым\"}", result);
+        assertEquals("{\"error\":\"РќР°Р·РІР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј\"}", result);
     }
 
     @SneakyThrows
@@ -106,7 +107,7 @@ public class ItemControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(itemService).addNewComment(any(), anyLong(), anyLong());
         assertEquals(objectMapper.writeValueAsString(commentDtoCorrect), result);
     }
@@ -114,7 +115,7 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void addCommentTest_whenCommentTextEmpty_thenThrow() {
-        when(itemService.addNewComment(any(), anyLong(), anyLong())).thenThrow(new ValidationException("Текст комментария должен быть указан"));
+        when(itemService.addNewComment(any(), anyLong(), anyLong())).thenThrow(new ValidationException("РћРїРёСЃР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј"));
 
         String result = mockMvc.perform(post(pathItems + pathItemId + pathComment, 1)
                         .content(objectMapper.writeValueAsString(commentDtoEmptyText))
@@ -123,10 +124,10 @@ public class ItemControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
 
         verify(itemService).addNewComment(any(), anyLong(), anyLong());
-        assertEquals("{\"error\":\"Текст комментария должен быть указан\"}", result);
+        assertEquals("{\"error\":\"РћРїРёСЃР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј\"}", result);
     }
 
 
@@ -143,7 +144,7 @@ public class ItemControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(itemService).updateItem(anyLong(), any(), anyLong());
         assertEquals(objectMapper.writeValueAsString(itemDtoCorrect), result);
     }

@@ -19,6 +19,8 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -67,7 +69,7 @@ public class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).addUser(any());
         assertEquals(objectMapper.writeValueAsString(userDtoCorrect), result);
     }
@@ -83,7 +85,7 @@ public class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).addUser(any());
         assertEquals("{\"error\":\"Пользователь с таким email уже существует\"}", result);
     }
@@ -99,7 +101,7 @@ public class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).addUser(any());
         assertEquals("{\"error\":\"Email не может быть пустым\"}", result);
     }
@@ -115,7 +117,7 @@ public class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).addUser(any());
         assertEquals("{\"error\":\"Поле Email должно содержать символ @\"}", result);
     }
@@ -131,7 +133,7 @@ public class UserControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).addUser(any());
         assertEquals("{\"error\":\"Имя не может быть пустым\"}", result);
     }
@@ -148,7 +150,7 @@ public class UserControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(userService).updateUser(any(), anyLong());
         assertEquals(objectMapper.writeValueAsString(userDtoCorrect), result);
     }

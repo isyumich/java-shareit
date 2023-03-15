@@ -74,19 +74,19 @@ public class ItemServiceImpl implements ItemService {
         commentValidation.commentValidation(comment);
         LocalDateTime currentDate = LocalDateTime.now();
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "Р’РµС‰СЊ СЃ id =", itemId, "РЅРµ РЅР°Р№РґРµРЅР°");
             log.info(message);
             throw new NotFoundException(message);
         }
         Item item = itemRepository.findById(itemId).get();
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            String message = String.format("%s %d %s", "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ id =", userId, "РЅРµ РЅР°Р№РґРµРЅ");
             log.info(message);
             throw new NotFoundException(message);
         }
         User user = userRepository.findById(userId).get();
         if (bookingRepository.findPastBookingsForUserAndItem(item, user, BookingStatus.APPROVED, currentDate).isEmpty()) {
-            String message = String.format("%s %d %s %d", "У пользователя с id =", userId, "нет бронирования для вещи с id=", itemId);
+            String message = String.format("%s %d %s %d", "РЈ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId, "РЅРµС‚ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёР№ РґР»СЏ РІРµС‰Рё СЃ id=", itemId);
             log.info(message);
             throw new ValidationException(message);
         }
@@ -120,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(long itemId, Long userId) {
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "Р’РµС‰СЊ СЃ id =", itemId, "РЅРµ РЅР°Р№РґРµРЅР°");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -187,18 +187,18 @@ public class ItemServiceImpl implements ItemService {
 
     private Item checkFieldsForUpdate(Item item, long itemId, Long userId) {
         if (userId == null) {
-            String message = "Не указан id пользователя";
+            String message = "РќРµ СѓРєР°Р·Р°РЅ id РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ";
             log.info(message);
             throw new InternalServerException(message);
         }
         if (itemRepository.findById(itemId).isEmpty()) {
-            String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
+            String message = String.format("%s %d %s", "Р’РµС‰СЊ СЃ id =", itemId, "РЅРµ РЅР°Р№РґРµРЅР°");
             log.info(message);
             throw new NotFoundException(message);
         }
         Item itemFromDb = itemRepository.findById(itemId).get();
         if (!userId.equals(itemFromDb.getOwner().getId())) {
-            String message = "Только владелец может редактировать вещь";
+            String message = "РР·РјРµРЅСЏС‚СЊ РІРµС‰СЊ РјРѕР¶РµС‚ С‚РѕР»СЊРєРѕ РІР»Р°РґРµР»РµС†";
             log.info(message);
             throw new ForbiddenException(message);
         }
@@ -216,7 +216,7 @@ public class ItemServiceImpl implements ItemService {
 
     private User getUserById(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Пользователь с id =", userId, "не найден");
+            String message = String.format("%s %d %s", "РџРѕР»СЊР·РІР°С‚РµР»СЊ СЃ id =", userId, "РЅРµ РЅР°Р№РґРµРЅ");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -232,7 +232,7 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkFormAndSize(Integer from, Integer size) {
         if (from < 0 || size < 1) {
-            String message = "Номер страницы или количество элементов недопустимо";
+            String message = "РќРѕРјРµСЂ СЃС‚СЂР°РЅРёС†С‹ РёР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РЅРµРґРѕРїСѓСЃС‚РёРјРѕ";
             log.info(message);
             throw new ValidationException(message);
         }

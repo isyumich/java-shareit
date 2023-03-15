@@ -28,13 +28,13 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto addNewItemRequest(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                             @RequestBody RequestBodyItemRequestDto requestBodyRequestDto) {
-        log.info("Запрос на создание новой заявки");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ Р·Р°СЏРІРєРё");
         return itemRequestService.addNewItemRequest(userId, requestBodyRequestDto);
     }
 
     @GetMapping
     public List<ItemRequestDto> getOwnItemRequests(@RequestHeader(value = headerUserValue, required = false) Long userId) {
-        log.info("Запрос на получение своих заявок");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ СЃРІРѕРёС… Р·Р°СЏРІРѕРє");
         return itemRequestService.getOwnItemRequests(userId);
     }
 
@@ -42,14 +42,14 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAllItemRequests(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                                    @RequestParam(defaultValue = "0") Integer from,
                                                    @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Запрос на получение всех заявок");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ РІСЃРµС… Р·Р°СЏРІРѕРє");
         return itemRequestService.getAllItemRequests(from, size, userId);
     }
 
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequestById(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                          @PathVariable long requestId) {
-        log.info(String.format("%s %d", "Запрос на получение заявки с id =", requestId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ Р·Р°СЏРІРєРё СЃ id =", requestId));
         return itemRequestService.getRequestById(userId, requestId);
     }
 }

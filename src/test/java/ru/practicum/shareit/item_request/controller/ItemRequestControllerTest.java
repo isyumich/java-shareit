@@ -18,6 +18,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item_request.dto.ItemRequestDto;
 import ru.practicum.shareit.item_request.service.ItemRequestService;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ItemRequestControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
         verify(itemRequestService).addNewItemRequest(anyLong(), any());
         assertEquals(objectMapper.writeValueAsString(itemRequestDtoCorrect), result);
     }
@@ -76,7 +77,7 @@ public class ItemRequestControllerTest {
     @SneakyThrows
     @Test
     void addItemRequestTest_whenItemRequestEmptyDesc_thenThrow() {
-        when(itemRequestService.addNewItemRequest(anyLong(), any())).thenThrow(new ValidationException("Описание не может быть пустым"));
+        when(itemRequestService.addNewItemRequest(anyLong(), any())).thenThrow(new ValidationException("РћРїРёСЃР°РЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅРѕ"));
 
         String result = mockMvc.perform(post(pathRequests)
                         .content(objectMapper.writeValueAsString(itemRequestDtoEmptyDesc))
@@ -85,10 +86,10 @@ public class ItemRequestControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn()
                 .getResponse()
-                .getContentAsString();
+                .getContentAsString(StandardCharsets.UTF_8);
 
         verify(itemRequestService).addNewItemRequest(anyLong(), any());
-        assertEquals("{\"error\":\"Описание не может быть пустым\"}", result);
+        assertEquals("{\"error\":\"РћРїРёСЃР°РЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅРѕ\"}", result);
     }
 
     @SneakyThrows

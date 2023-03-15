@@ -14,7 +14,7 @@ public class ItemRequestValidation {
     private void descriptionValidation(RequestBodyItemRequestDto requestBodyRequestDto) {
         if (requestBodyRequestDto.getDescription() == null || requestBodyRequestDto.getDescription().equals("") ||
                 requestBodyRequestDto.getDescription().equals(" ")) {
-            String message = "Описание не может быть пустым";
+            String message = "РћРїРёСЃР°РЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅРѕ";
             log.info(message);
             throw new ValidationException(message);
         }

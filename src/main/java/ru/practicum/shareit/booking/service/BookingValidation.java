@@ -18,25 +18,25 @@ public class BookingValidation {
 
     private void itemAvailableValidation(Item item) {
         if (!item.getAvailable()) {
-            throw new ValidationException("Вещь недоступна для бронирования");
+            throw new ValidationException("Р’РµС‰СЊ РЅРµРґРѕРїСѓСЃС‚РёРјР° РґР»СЏ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ");
         }
     }
 
     private void startOrEndDateValidation(RequestBodyBookingDto requestBooking) {
         if (requestBooking.getStart() == null || requestBooking.getEnd() == null) {
-            throw new ValidationException("Дата начала и окончания бронирования не должны быть пустыми");
+            throw new ValidationException("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° Рё РґР°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ Р±СЂРѕРЅРёСЂРѕРІР°РёСЏ РЅРµ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РїСѓСЃС‚С‹РјРё");
         }
         if (requestBooking.getStart().isAfter(requestBooking.getEnd()) || requestBooking.getStart().equals(requestBooking.getEnd())) {
-            throw new ValidationException("Дата начала бронирования должна быть меньше даты окончания");
+            throw new ValidationException("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РјРµРЅСЊС€Рµ, С‡РµРј РґР°С‚Р° РѕРєРѕРЅС‡Р°РЅРёСЏ");
         }
         if (requestBooking.getStart().isBefore(currentDate)) {
-            throw new ValidationException("Дата начала бронирования должна быть больше текущей даты");
+            throw new ValidationException("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ С‚РµРєСѓС‰РµР№ РґР°С‚С‹");
         }
     }
 
     private void bookerIsNotOwnerValidation(Long userId, Item item) {
         if (item.getOwner().getId() == userId) {
-            throw new NotFoundException("Вещь не может быть забронирована владельцем");
+            throw new NotFoundException("Р’Р»Р°РґРµР»РµС† РІРµС‰Рё РЅРµ РјРѕР¶РµС‚ РµС‘ Р±СЂРѕРЅРёСЂРѕРІР°С‚СЊ");
         }
     }
 

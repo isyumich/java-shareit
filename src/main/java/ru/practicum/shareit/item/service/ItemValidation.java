@@ -16,7 +16,7 @@ public class ItemValidation {
     private void nameValidation(RequestBodyItemDto requestBodyItemDto) {
         if (requestBodyItemDto.getName() == null || requestBodyItemDto.getName().equals("") ||
                 requestBodyItemDto.getName().equals(" ")) {
-            String message = "Имя не может быть пустым";
+            String message = "РќР°Р·РІР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј";
             log.info(message);
             throw new ValidationException(message);
         }
@@ -25,7 +25,7 @@ public class ItemValidation {
     private void descriptionValidation(RequestBodyItemDto requestBodyItemDto) {
         if (requestBodyItemDto.getDescription() == null || requestBodyItemDto.getDescription().equals("") ||
                 requestBodyItemDto.getDescription().equals(" ")) {
-            String message = "Описание не может быть пустым";
+            String message = "РћРїРёСЃР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј";
             log.info(message);
             throw new ValidationException(message);
         }
@@ -33,7 +33,7 @@ public class ItemValidation {
 
     private void availableValidation(RequestBodyItemDto requestBodyItemDto) {
         if (requestBodyItemDto.getAvailable() == null) {
-            String message = "Доступность товара должна быть указана";
+            String message = "Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РІРµС‰Рё РґР»СЏ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ СѓРєР°Р·Р°РЅР°";
             log.info(message);
             throw new ValidationException(message);
         }
@@ -41,7 +41,7 @@ public class ItemValidation {
 
     private void ownerIdValidation(Long userId) {
         if (userId == null) {
-            String message = "Не указан id владельца";
+            String message = "РќРµ СѓРєР°Р·Р°РЅ id РІР»Р°РґРµР»СЊС†Р°";
             log.info(message);
             throw new ValidationException(message);
         }

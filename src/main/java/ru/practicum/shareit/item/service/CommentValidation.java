@@ -13,7 +13,7 @@ public class CommentValidation {
 
     private void textValidation(Comment comment) {
         if (comment.getText() == null || comment.getText().equals("") || comment.getText().equals(" ")) {
-            String message = "Текст комментария должен быть указан";
+            String message = "РћРїРёСЃР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј";
             log.info(message);
             throw new ValidationException(message);
         }

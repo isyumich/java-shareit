@@ -62,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllItemRequests(Integer from, Integer size, Long userId) {
         User user = getUserById(userId);
         if (from < 0 || size < 1) {
-            String message = "Êîëè÷åñòâî ýëåìåíòîâ èëè íîìåð ñòðàíèöû óêàçàíû íåêîððåêòíî";
+            String message = "ÐÐ¾Ð¼ÐµÑ€ ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ñ‹ Ð¸Ð»Ð¸ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² Ð½ÐµÐ´Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ð¾";
             log.info(message);
             throw new ValidationException(message);
         }
@@ -73,7 +73,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto getRequestById(Long userId, long requestId) {
         getUserById(userId);
         if (itemRequestRepository.findById(requestId).isEmpty()) {
-            String message = String.format("%s %d %s", "Çàÿâêà ñ id =", userId, "íå íàéäåíà");
+            String message = String.format("%s %d %s", "Ð—Ð°ÑÐ²ÐºÐ° Ñ id =", userId, "Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð°");
             log.info(message);
             throw new NotFoundException(message);
         }
@@ -109,7 +109,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private User getUserById(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
-            String message = String.format("%s %d %s", "Ïîëüçîâàòåëü ñ id =", userId, "íå íàéäåí");
+            String message = String.format("%s %d %s", "ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ñ id =", userId, "Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½");
             log.info(message);
             throw new NotFoundException(message);
         }

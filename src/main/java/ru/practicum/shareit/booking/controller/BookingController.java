@@ -29,21 +29,21 @@ public class BookingController {
     @PostMapping
     public BookingDto addNewBooking(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                     @RequestBody RequestBodyBookingDto requestBooking) {
-        log.info("Запрос на новое бронирование");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ");
         return bookingService.addNewBooking(requestBooking, userId);
     }
 
     @PatchMapping(pathBookingId)
     public BookingDto approveOrRejectBooking(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                              @PathVariable long bookingId, @RequestParam boolean approved) {
-        log.info("Запрос на одобрение/отказ бронирования");
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ/РѕС‚РєР»РѕРЅРµРЅРёРµ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ");
         return bookingService.approveOrRejectBooking(userId, bookingId, approved);
     }
 
     @GetMapping(pathBookingId)
     public BookingDto getBookingById(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                      @PathVariable long bookingId) {
-        log.info(String.format("%s %d", "Запрос на получение бронирования с id =", bookingId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёСЏ СЃ id =", bookingId));
         return bookingService.getBookingById(userId, bookingId);
     }
 
@@ -52,7 +52,7 @@ public class BookingController {
                                                   @RequestParam(defaultValue = "ALL") String state,
                                                   @RequestParam(defaultValue = "0") Integer from,
                                                   @RequestParam(defaultValue = "10") Integer size) {
-        log.info(String.format("%s %d", "Запрос на получение бронирований для пользователя с id =", userId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёР№ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId));
         return bookingService.getBookingCurrentUser(userId, state, from, size);
     }
 
@@ -61,7 +61,7 @@ public class BookingController {
                                                           @RequestParam(defaultValue = "ALL") String state,
                                                           @RequestParam(defaultValue = "0") Integer from,
                                                           @RequestParam(defaultValue = "10") Integer size) {
-        log.info(String.format("%s %d", "Запрос на получение бронирований для вещей пользователя с id =", userId));
+        log.info(String.format("%s %d", "Р—Р°РїСЂРѕСЃ РЅР° РїРѕР»СѓС‡РµРЅРёРµ Р±СЂРѕРЅРёСЂРѕРІР°РЅРёР№ РґР»СЏ РІРµС‰РµР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ id =", userId));
         return bookingService.getBookingForItemsCurrentUser(userId, state, from, size);
     }
 }
