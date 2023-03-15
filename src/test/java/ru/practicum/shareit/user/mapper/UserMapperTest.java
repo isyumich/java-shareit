@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserMapperTest {
     final TestHelper testHelper = new TestHelper();
-    
     @Test
     public void toUserDtoTest() {
         User user = testHelper.getUser();
