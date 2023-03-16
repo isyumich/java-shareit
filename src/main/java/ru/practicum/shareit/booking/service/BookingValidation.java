@@ -18,16 +18,19 @@ public class BookingValidation {
 
     private void itemAvailableValidation(Item item) {
         if (!item.getAvailable()) {
-            throw new ValidationException("Данная вещь недоступна для бронирования");
+            throw new ValidationException("Вещь недопустима для бронирования");
         }
     }
 
     private void startOrEndDateValidation(RequestBodyBookingDto requestBooking) {
-        if (requestBooking.getStart().isAfter(requestBooking.getEnd())) {
-            throw new ValidationException("Дата начала бронирования должна быть меньше даты окончания");
+        if (requestBooking.getStart() == null || requestBooking.getEnd() == null) {
+            throw new ValidationException("Дата начала и дата окончания бронироваия не должны быть пустыми");
+        }
+        if (requestBooking.getStart().isAfter(requestBooking.getEnd()) || requestBooking.getStart().equals(requestBooking.getEnd())) {
+            throw new ValidationException("Дата начала должна быть меньше, чем дата окончания");
         }
         if (requestBooking.getStart().isBefore(currentDate)) {
-            throw new ValidationException("Дата начала бронирования не должна быть меньше текущей даты");
+            throw new ValidationException("Дата начала должна быть больше текущей даты");
         }
     }
 
