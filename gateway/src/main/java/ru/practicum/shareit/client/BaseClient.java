@@ -14,7 +14,7 @@ import java.util.Map;
 public class BaseClient {
     final RestTemplate rest;
 
-    final static String HEADER_USER_VALUE = "X-Sharer-User-Id";
+    final String headerUserValue = "X-Sharer-User-Id";
 
     public BaseClient(RestTemplate rest) {
         this.rest = rest;
@@ -101,7 +101,7 @@ public class BaseClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         if (userId != null) {
-            headers.set(HEADER_USER_VALUE, String.valueOf(userId));
+            headers.set(headerUserValue, String.valueOf(userId));
         }
         return headers;
     }

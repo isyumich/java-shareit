@@ -23,29 +23,29 @@ import javax.validation.constraints.PositiveOrZero;
 @RequiredArgsConstructor
 public class ItemRequestController {
     final ItemRequestClient itemRequestClient;
-    final String HEADER_USER_VALUE = "X-Sharer-User-Id";
+    final String headerUserValue = "X-Sharer-User-Id";
 
     @Validated(Create.class)
     @PostMapping
-    public ResponseEntity<Object> addNewItemRequest(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
+    public ResponseEntity<Object> addNewItemRequest(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                                     @Valid @RequestBody RequestBodyItemRequestDto requestBodyRequestDto) {
         return itemRequestClient.addNewItemRequest(userId, requestBodyRequestDto);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getOwnItemRequests(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId) {
+    public ResponseEntity<Object> getOwnItemRequests(@RequestHeader(value = headerUserValue, required = false) Long userId) {
         return itemRequestClient.getOwnItemRequests(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllItemRequests(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
+    public ResponseEntity<Object> getAllItemRequests(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                                      @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                      @Positive @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestClient.getAllItemRequests(from, size, userId);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getRequestById(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
+    public ResponseEntity<Object> getRequestById(@RequestHeader(value = headerUserValue, required = false) Long userId,
                                                  @PathVariable long requestId) {
         return itemRequestClient.getRequestById(userId, requestId);
     }
