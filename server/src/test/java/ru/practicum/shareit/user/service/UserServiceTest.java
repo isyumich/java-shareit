@@ -64,83 +64,6 @@ public class UserServiceTest {
         verify(userRepository).save(user);
     }
 
-    @Test
-    void addUserTest_whenUserNameEmpty_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Имя не может быть пустым"));
-        user.setName("");
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserNameIsNull_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Имя не может быть пустым"));
-        user.setName(null);
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserNameSpace_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Имя не может быть пустым"));
-        user.setName(" ");
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserEmailEmpty_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Email не может быть пустым"));
-        user.setEmail("");
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserEmailIsNull_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Email не может быть пустым"));
-        user.setEmail(null);
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserEmailSpace_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Email не может быть пустым"));
-        user.setEmail(" ");
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
-    @Test
-    void addUserTest_whenUserEmailWithoutSymbol_thenThrowException() {
-        when(userRepository.save(any()))
-                .thenThrow(new ValidationException("Поле Email должно содержать символ @"));
-        user.setEmail("mail.ru");
-
-        assertThrows(ValidationException.class,
-                () -> userServiceImpl.addUser(user));
-        verify(userRepository, never()).save(user);
-    }
-
 
     @Test
     void updateItemTest_whenCorrect_thenUpdate() {
@@ -194,7 +117,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void deleteUserById_deletes() {
+    void deleteUserByIdTest() {
         long userId = 1L;
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         userServiceImpl.deleteUser(userId);

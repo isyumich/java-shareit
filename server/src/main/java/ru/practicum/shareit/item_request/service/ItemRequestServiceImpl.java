@@ -34,7 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     final ItemRequestRepository itemRequestRepository;
     final ItemRepository itemRepository;
     final UserRepository userRepository;
-    final ItemRequestValidation itemRequestValidation = new ItemRequestValidation();
 
     @Autowired
     public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository,
@@ -48,7 +47,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto addNewItemRequest(Long userId, RequestBodyItemRequestDto requestBodyItemRequestDto) {
         ItemRequest itemRequest = createItemRequest(requestBodyItemRequestDto, userId);
-        itemRequestValidation.itemRequestValidation(requestBodyItemRequestDto);
         return itemRequestToItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 

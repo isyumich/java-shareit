@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.IsAlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -22,7 +23,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
-    final UserValidation userValidation = new UserValidation();
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -31,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(User user) {
-        userValidation.userValidation(user);
         try {
             return UserDtoMapper.mapRow(userRepository.save(user));
         } catch (Exception e) {
@@ -43,7 +42,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(User user, long userId) {
         User checkedUser = checkFieldsForUpdate(user, userId);
-        userValidation.userValidation(checkedUser);
         checkedUser.setId(userId);
         return UserDtoMapper.mapRow(userRepository.save(checkedUser));
     }
@@ -59,8 +57,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(long userId) {
-        getUser(userId);
         userRepository.deleteById(userId);
         log.info(String.format("%s %d %s", "Пользователь с id =", userId, "удалён"));
     }

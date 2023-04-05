@@ -23,12 +23,12 @@ public class UserClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> updateUser(RequestBodyUserDto requestBodyUserDto, Long userId) {
-        return patch("/" + userId, requestBodyUserDto);
-    }
-
     public ResponseEntity<Object> addNewUser(RequestBodyUserDto requestBodyUserDto) {
         return post("", requestBodyUserDto);
+    }
+
+    public ResponseEntity<Object> updateUser(RequestBodyUserDto requestBodyUserDto, Long userId) {
+        return patch("/" + userId, requestBodyUserDto);
     }
 
     public ResponseEntity<Object> getUserById(Long userId) {
@@ -39,7 +39,7 @@ public class UserClient extends BaseClient {
         return get("");
     }
 
-    public void deleteUser(Long userId) {
-        delete("/" + userId);
+    public ResponseEntity<Object> deleteUser(Long userId) {
+        return delete("/" + userId);
     }
 }

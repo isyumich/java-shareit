@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.RequestBodyBookingDto;
+import ru.practicum.shareit.validation.Create;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -24,6 +25,7 @@ public class BookingController {
     final static String HEADER_USER_VALUE = "X-Sharer-User-Id";
     final String pathBookingId = "/{bookingId}";
 
+    @Validated(Create.class)
     @PostMapping
     public ResponseEntity<Object> addNewBooking(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
                                                 @Valid @RequestBody RequestBodyBookingDto requestBooking) {

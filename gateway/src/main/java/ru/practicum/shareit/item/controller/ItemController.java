@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.client.ItemClient;
+import ru.practicum.shareit.validation.Create;
 import ru.practicum.shareit.item.dto.RequestBodyCommentDto;
 import ru.practicum.shareit.item.dto.RequestBodyItemDto;
+import ru.practicum.shareit.validation.Update;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -26,12 +28,14 @@ public class ItemController {
     final String pathIdItem = "/{itemId}";
     final String HEADER_USER_VALUE = "X-Sharer-User-Id";
 
+    @Validated(Create.class)
     @PostMapping
     public ResponseEntity<Object> addNewItem(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
                                              @Valid @RequestBody RequestBodyItemDto requestBodyItemDto) {
         return itemClient.addNewItem(requestBodyItemDto, userId);
     }
 
+    @Validated(Create.class)
     @PostMapping(pathIdItem + "/comment")
     public ResponseEntity<Object> addNewComment(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
                                                 @Valid @RequestBody RequestBodyCommentDto requestBodyCommentDto,
@@ -40,10 +44,11 @@ public class ItemController {
     }
 
 
+    @Validated(Update.class)
     @PatchMapping(pathIdItem)
     public ResponseEntity<Object> updateItem(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
                                              @PathVariable long itemId,
-                                             @RequestBody RequestBodyItemDto requestBodyItemDto) {
+                                             @Valid @RequestBody RequestBodyItemDto requestBodyItemDto) {
         return itemClient.updateItem(itemId, requestBodyItemDto, userId);
     }
 

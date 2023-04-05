@@ -1,16 +1,18 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import lombok.NonNull;
+import ru.practicum.shareit.validation.Create;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class RequestBodyItemDto {
-    @NonNull
+    @NotBlank(groups = Create.class, message = "Имя вещи должно быть указано")
     String name;
-    @NonNull
+    @NotBlank(groups = Create.class, message = "Описание вещи должно быть указано")
     String description;
-    @NonNull
+    @NotNull(groups = Create.class, message = "Доступность вещи должна быть указана")
     Boolean available;
-    @NonNull
     Long requestId;
 }

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.client.UserClient;
-import ru.practicum.shareit.user.dto.Create;
 import ru.practicum.shareit.user.dto.RequestBodyUserDto;
-import ru.practicum.shareit.user.dto.Update;
+import ru.practicum.shareit.validation.Create;
+import ru.practicum.shareit.validation.Update;
 
 import javax.validation.Valid;
 
@@ -50,7 +50,7 @@ public class UserController {
 
 
     @DeleteMapping(pathUserId)
-    public void deleteUser(@PathVariable long userId) {
-        userClient.deleteUser(userId);
+    public ResponseEntity<Object> deleteUser(@PathVariable long userId) {
+        return userClient.deleteUser(userId);
     }
 }

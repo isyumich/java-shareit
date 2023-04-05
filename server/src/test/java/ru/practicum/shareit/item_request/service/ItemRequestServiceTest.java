@@ -79,17 +79,6 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void addItemRequestTest_whenDescIsMissing_thenThrowException() {
-        itemRequestDto.setItems(new ArrayList<>());
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(author));
-        requestBodyItemRequestDto.setDescription("");
-
-        verify(itemRequestRepository, never()).save(any());
-        assertThrows(ValidationException.class,
-                () -> itemRequestServiceimpl.addNewItemRequest(1L, requestBodyItemRequestDto));
-    }
-
-    @Test
     void getItemRequestByIdTest_whenItemRequestPresent_thenItemRequest() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(author));
         when(itemRequestRepository.findById(any())).thenReturn(Optional.of(itemRequest));

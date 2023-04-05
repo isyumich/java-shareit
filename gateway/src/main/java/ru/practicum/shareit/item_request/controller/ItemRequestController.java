@@ -5,15 +5,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item_request.client.ItemRequestClient;
 import ru.practicum.shareit.item_request.dto.RequestBodyItemRequestDto;
+import ru.practicum.shareit.validation.Create;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 
 @Controller
+@Validated
 @RequestMapping(path = "/requests")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -21,9 +25,10 @@ public class ItemRequestController {
     final ItemRequestClient itemRequestClient;
     final String HEADER_USER_VALUE = "X-Sharer-User-Id";
 
+    @Validated(Create.class)
     @PostMapping
     public ResponseEntity<Object> addNewItemRequest(@RequestHeader(value = HEADER_USER_VALUE, required = false) Long userId,
-                                                    @RequestBody RequestBodyItemRequestDto requestBodyRequestDto) {
+                                                    @Valid @RequestBody RequestBodyItemRequestDto requestBodyRequestDto) {
         return itemRequestClient.addNewItemRequest(userId, requestBodyRequestDto);
     }
 

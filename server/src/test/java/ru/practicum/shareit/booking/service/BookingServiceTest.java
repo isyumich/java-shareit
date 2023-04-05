@@ -103,26 +103,6 @@ public class BookingServiceTest {
     }
 
     @Test
-    void addBookingTest_whenStartIsNull_thenThrowException() {
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-        requestBodyBookingDto.setStart(null);
-
-        assertThrows(ValidationException.class,
-                () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, userId));
-    }
-
-    @Test
-    void addBookingTest_whenEndIsNull_thenThrowException() {
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-        requestBodyBookingDto.setEnd(null);
-
-        assertThrows(ValidationException.class,
-                () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, userId));
-    }
-
-    @Test
     void addBookingTest_whenStartMoreEnd_thenThrowException() {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
@@ -137,16 +117,6 @@ public class BookingServiceTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         requestBodyBookingDto.setStart(requestBodyBookingDto.getEnd());
-
-        assertThrows(ValidationException.class,
-                () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, userId));
-    }
-
-    @Test
-    void addBookingTest_whenStartLessNow_thenThrowException() {
-        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-        requestBodyBookingDto.setStart(LocalDateTime.now().minus(100, ChronoUnit.DAYS));
 
         assertThrows(ValidationException.class,
                 () -> bookingServiceImpl.addNewBooking(requestBodyBookingDto, userId));

@@ -1,10 +1,12 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import lombok.NonNull;
+import ru.practicum.shareit.validation.Create;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class RequestBodyCommentDto {
-    @NonNull
+    @NotBlank(groups = Create.class, message = "Текст комментария должен быть указан")
     String text;
 }

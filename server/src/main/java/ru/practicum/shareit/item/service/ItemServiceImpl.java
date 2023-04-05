@@ -38,8 +38,6 @@ public class ItemServiceImpl implements ItemService {
     final BookingRepository bookingRepository;
     final CommentRepository commentRepository;
     final ItemRequestRepository itemRequestRepository;
-    final ItemValidation itemValidation = new ItemValidation();
-    final CommentValidation commentValidation = new CommentValidation();
 
     @Autowired
     public ItemServiceImpl(ItemRepository itemRepository,
@@ -56,7 +54,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addNewItem(RequestBodyItemDto requestBodyItemDto, Long userId) {
-        itemValidation.itemValidation(requestBodyItemDto, userId);
         Item item = RequestBodyItemDtoMapper.mapRow(requestBodyItemDto);
         User owner = getUserById(userId);
         Long itemRequestId = requestBodyItemDto.getRequestId();
@@ -71,7 +68,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addNewComment(Comment comment, Long userId, long itemId) {
-        commentValidation.commentValidation(comment);
+        System.out.println("userId = " + userId);
+        System.out.println("itemId = " + itemId);
         LocalDateTime currentDate = LocalDateTime.now();
         if (itemRepository.findById(itemId).isEmpty()) {
             String message = String.format("%s %d %s", "Вещь с id =", itemId, "не найдена");
