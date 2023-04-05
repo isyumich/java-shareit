@@ -13,7 +13,6 @@ import org.mockito.quality.Strictness;
 import ru.practicum.shareit.TestHelper;
 import ru.practicum.shareit.exception.IsAlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;

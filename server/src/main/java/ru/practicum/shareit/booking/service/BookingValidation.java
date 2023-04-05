@@ -5,8 +5,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 
-import java.time.LocalDateTime;
-
 public class BookingValidation {
     public void bookingValidation(RequestBodyBookingDto requestBooking, Item item, Long userId) {
         itemAvailableValidation(item);
