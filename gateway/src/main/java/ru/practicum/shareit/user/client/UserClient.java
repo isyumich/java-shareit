@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.client;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -11,8 +13,9 @@ import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.RequestBodyUserDto;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserClient extends BaseClient {
-    private static final String API_PREFIX = "/users";
+    static final String API_PREFIX = "/users";
 
     @Autowired
     public UserClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -24,22 +27,27 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> addNewUser(RequestBodyUserDto requestBodyUserDto) {
-        return post("", requestBodyUserDto);
+        String path = "";
+        return post(path, requestBodyUserDto);
     }
 
     public ResponseEntity<Object> updateUser(RequestBodyUserDto requestBodyUserDto, Long userId) {
-        return patch("/" + userId, requestBodyUserDto);
+        String path = String.format("%s%d", "/", userId);
+        return patch(path, requestBodyUserDto);
     }
 
     public ResponseEntity<Object> getUserById(Long userId) {
-        return get("/" + userId);
+        String path = String.format("%s%d", "/", userId);
+        return get(path);
     }
 
     public ResponseEntity<Object> getAllUsers() {
-        return get("");
+        String path = "";
+        return get(path);
     }
 
     public ResponseEntity<Object> deleteUser(Long userId) {
-        return delete("/" + userId);
+        String path = String.format("%s%d", "/", userId);
+        return delete(path);
     }
 }

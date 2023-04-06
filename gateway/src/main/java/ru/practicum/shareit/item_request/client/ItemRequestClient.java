@@ -29,24 +29,28 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> addNewItemRequest(Long userId, RequestBodyItemRequestDto requestBodyItemRequestDto) {
-        return post("", userId, requestBodyItemRequestDto);
+        String path = "";
+        return post(path, userId, requestBodyItemRequestDto);
 
     }
 
     public ResponseEntity<Object> getOwnItemRequests(Long userId) {
-        return get("", userId);
+        String path = "";
+        return get(path, userId);
     }
 
     public ResponseEntity<Object> getAllItemRequests(Integer from, Integer size, Long userId) {
+        String path = "/all/?from={from}&size={size}";
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
         );
-        return get("/all/?from={from}&size={size}", userId, parameters);
+        return get(path, userId, parameters);
     }
 
     public ResponseEntity<Object> getRequestById(Long userId, long requestId) {
-        return get("/" + requestId, userId);
+        String path = String.format("%s%d", "/", requestId);
+        return get(path, userId);
     }
 
 

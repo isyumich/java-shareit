@@ -31,35 +31,41 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> addNewItem(RequestBodyItemDto requestBodyItemDto, Long userId) {
-        return post("", userId, requestBodyItemDto);
+        String path = "";
+        return post(path, userId, requestBodyItemDto);
     }
 
     public ResponseEntity<Object> addNewComment(RequestBodyCommentDto requestBodyCommentDto, Long userId, long itemId) {
-        return post("/" + itemId + "/comment", userId, requestBodyCommentDto);
+        String path = String.format("%s%d%s", "/", itemId, "/comment");
+        return post(path, userId, requestBodyCommentDto);
     }
 
     public ResponseEntity<Object> updateItem(long itemId, RequestBodyItemDto requestBodyItemDto, Long userId) {
-        return patch("/" + itemId, userId, requestBodyItemDto);
+        String path = String.format("%s%d", "/", itemId);
+        return patch(path, userId, requestBodyItemDto);
     }
 
     public ResponseEntity<Object> getAllItems(Long userId, Integer from, Integer size) {
+        String path = "?from={from}&size={size}";
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
         );
-        return get("?from={from}&size={size}", userId, parameters);
+        return get(path, userId, parameters);
     }
 
     public ResponseEntity<Object> getItemById(long itemId, Long userId) {
-        return get("/" + itemId, userId);
+        String path = String.format("%s%d", "/", itemId);
+        return get(path, userId);
     }
 
     public ResponseEntity<Object> getItemByNameOrDescription(String text, Long userId, Integer from, Integer size) {
+        String path = "/search?text={text}&from={from}&size={size}";
         Map<String, Object> parameters = Map.of(
                 "text", text,
                 "from", from,
                 "size", size
         );
-        return get("/search?text={text}&from={from}&size={size}", userId, parameters);
+        return get(path, userId, parameters);
     }
 }
